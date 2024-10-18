@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsAspireHost>true</IsAspireHost>
+        <UserSecretsId>82B19C17-BE14-41AC-8FAD-1DCA3A9FE2A0</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Aspire.Hosting.AppHost" Version="8.1.0"/>
+        <PackageReference Include="Aspire.Hosting.Azure.CosmosDB" Version="9.0.0-rc.1.24511.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\FancyToDo.API\FancyToDo.API.csproj" />
+    </ItemGroup>
+
+</Project>
