@@ -1,14 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppHost", "AppHost\AppHost.csproj", "{F20CF2FC-5D16-425D-8DB8-6AB878E8F8DA}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35312.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppHost", "AppHost\AppHost.csproj", "{F20CF2FC-5D16-425D-8DB8-6AB878E8F8DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FancyToDo.API", "FancyToDo.API\FancyToDo.API.csproj", "{D2FB33C3-5ED0-4A55-BEB2-5ECDE5B750EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FancyToDo.API", "FancyToDo.API\FancyToDo.API.csproj", "{D2FB33C3-5ED0-4A55-BEB2-5ECDE5B750EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FancyToDo.Core", "FancyToDo.Core\FancyToDo.Core.csproj", "{F8314BEE-FB6F-4BED-BADF-5704C38F1704}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FancyToDo.Core", "FancyToDo.Core\FancyToDo.Core.csproj", "{F8314BEE-FB6F-4BED-BADF-5704C38F1704}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FancyToDo.Infrastructure", "FancyToDo.Infrastructure\FancyToDo.Infrastructure.csproj", "{11CB6D4F-C2C9-4A5F-8640-32CB4F033EA6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FancyToDo.Infrastructure", "FancyToDo.Infrastructure\FancyToDo.Infrastructure.csproj", "{11CB6D4F-C2C9-4A5F-8640-32CB4F033EA6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel", "SharedKernel\SharedKernel.csproj", "{DEBE92DB-FA58-45A3-9E06-780FD30C4DF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedKernel", "SharedKernel\SharedKernel.csproj", "{DEBE92DB-FA58-45A3-9E06-780FD30C4DF7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FancyToDo.Functions", "FancyToDo.Functions\FancyToDo.Functions.csproj", "{79B369D1-73F4-4F69-AF22-86AFD4E0F150}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,5 +41,12 @@ Global
 		{DEBE92DB-FA58-45A3-9E06-780FD30C4DF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DEBE92DB-FA58-45A3-9E06-780FD30C4DF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DEBE92DB-FA58-45A3-9E06-780FD30C4DF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79B369D1-73F4-4F69-AF22-86AFD4E0F150}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79B369D1-73F4-4F69-AF22-86AFD4E0F150}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79B369D1-73F4-4F69-AF22-86AFD4E0F150}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79B369D1-73F4-4F69-AF22-86AFD4E0F150}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

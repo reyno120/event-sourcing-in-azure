@@ -1,7 +1,7 @@
 ﻿using Ardalis.GuardClauses;
 using SharedKernel;
 
-namespace FancyToDo.Core;
+namespace FancyToDo.Core.ToDoList;
 
 public class ToDoItem : Entity
 {

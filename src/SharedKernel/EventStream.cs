@@ -1,18 +1,9 @@
-﻿using System.Reflection;
-using System.Text.Json;
-using Type = System.Type;
+﻿using System.Text.Json;
 
-namespace FancyToDo.Infrastructure;
+namespace SharedKernel;
 
 public class EventStream
 {
-    // public static Dictionary<string, Type> EventTypes
-    // {
-    //     get
-    //     {
-    //         Assembly.GetAssembly().GetTypes().Where(w => w.Inter)
-    //     }
-    // }
     public DateTimeOffset TimeStamp = DateTimeOffset.UtcNow;
     public Guid EventId = Guid.NewGuid();
     public Guid StreamId { get; init; }

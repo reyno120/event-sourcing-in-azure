@@ -1,6 +1,7 @@
 ﻿using FancyToDo.Core;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
+using SharedKernel;
 
 namespace FancyToDo.Infrastructure;
 
@@ -9,22 +10,22 @@ public class EventStore(CosmosClient cosmosClient, string dbName, string contain
     private readonly Container _container = cosmosClient.GetContainer(dbName, containerName);
 
     
-    public async Task<IEnumerable<T>> Load<T>()
-    {
-        var events = await LoadEvents();
-        if (events.Count == 0) 
-            return new List<T>();
-
-        var streams = events
-            .GroupBy(g => g.StreamId)
-            .ToList();
-
-        return streams
-            .Select(stream => 
-                ((T)Activator.CreateInstance(typeof(T), 
-                    events.Select(s => s.Deserialize()))!)!)
-            .ToList();
-    }
+    // public async Task<IEnumerable<T>> Load<T>()
+    // {
+    //     var events = await LoadEvents();
+    //     if (events.Count == 0) 
+    //         return new List<T>();
+    //
+    //     var streams = events
+    //         .GroupBy(g => g.StreamId)
+    //         .ToList();
+    //
+    //     return streams
+    //         .Select(stream => 
+    //             ((T)Activator.CreateInstance(typeof(T), 
+    //                 events.Select(s => s.Deserialize()))!)!)
+    //         .ToList();
+    // }
     
     public async Task<T?> Load<T>(Guid id)
     {
@@ -36,7 +37,8 @@ public class EventStore(CosmosClient cosmosClient, string dbName, string contain
             events.Select(s => s.Deserialize()))!;
     }
 
-    private async Task<List<EventStream>> LoadEvents(Guid? id = null)
+    // private async Task<List<EventStream>> LoadEvents(Guid? id = null)
+    private async Task<List<EventStream>> LoadEvents(Guid id)
     {
         IOrderedQueryable<EventStream> queryable = _container.GetItemLinqQueryable<EventStream>();
 

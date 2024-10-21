@@ -16,6 +16,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\FancyToDo.Core\FancyToDo.Core.csproj" />
+      <ProjectReference Include="..\FancyToDo.Infrastructure\FancyToDo.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

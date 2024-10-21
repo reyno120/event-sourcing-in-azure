@@ -3,5 +3,5 @@
 public interface IEventStore
 {
     Task<T?> Load<T>(Guid id);
-    Task<IEnumerable<T>> Load<T>();
+    // Task<IEnumerable<T>> Load<T>();
 }

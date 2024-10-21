@@ -1,7 +1,7 @@
 ﻿using Ardalis.GuardClauses;
 using SharedKernel;
 
-namespace FancyToDo.Core;
+namespace FancyToDo.Core.ToDoList;
 
 public class ToDoList : Entity, IAggregateRoot
 {
@@ -16,10 +16,7 @@ public class ToDoList : Entity, IAggregateRoot
         Guard.Against.NullOrEmpty(name);
         Guard.Against.LengthOutOfRange(name, 1, 50);
 
-        this.Name = name;
-        this.Id = Guid.NewGuid();
-        
-        this.AddDomainEvent(new ToDoListCreatedEvent(this.Id, this.Name));
+        Apply(new ToDoListCreatedEvent(Guid.NewGuid(), name));
     }
 
     public void AddToDo(ToDoItem item)
@@ -39,6 +36,12 @@ public class ToDoList : Entity, IAggregateRoot
             Mutate(@event);
     }
 
+    private void Apply(IEvent @event)
+    {
+        this.AddDomainEvent(@event);
+        Mutate(@event);
+    }
+
     private void Mutate(IEvent @event)
     {
         ((dynamic)this).When((dynamic)@event);
@@ -53,5 +56,3 @@ public class ToDoList : Entity, IAggregateRoot
     #endregion
 
 }
-
-public record ToDoListCreatedEvent(Guid Id, string Name) : IEvent;

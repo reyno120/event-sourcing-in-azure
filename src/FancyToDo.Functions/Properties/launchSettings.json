@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "FancyToDo.Functions": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7162",
+      "launchBrowser": false
+    }
+  }
+}

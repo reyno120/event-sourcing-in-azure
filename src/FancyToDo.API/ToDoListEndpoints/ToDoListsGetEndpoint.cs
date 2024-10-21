@@ -1,6 +1,5 @@
 ﻿using Ardalis.ApiEndpoints;
-using AutoMapper;
-using FancyToDo.Core;
+using FancyToDo.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -10,8 +9,7 @@ public record GetToDoListResponse(Guid Id, string Name, List<GetToDoListsRespons
 public record GetToDoListsResponseToDoItem(Guid Id, string Task, string Status);
 
 public class ToDoListsGetEndpoint(
-    IMapper mapper,
-    IEventStore eventStore) : EndpointBaseAsync
+    ToDoListReadRepository repository) : EndpointBaseAsync
     .WithoutRequest
     .WithResult<IActionResult>
 {
@@ -24,12 +22,13 @@ public class ToDoListsGetEndpoint(
     ]
     public override async Task<IActionResult> HandleAsync(CancellationToken token)
     {
-        var toDoList = await eventStore.Load<ToDoList>()
+        var toDoList = await repository.Get<GetToDoListResponse>()
             .ContinueWith(c => c.Result.SingleOrDefault(), token);
         
         if (toDoList is null)
             return BadRequest();
 
-        return Ok(mapper.Map<GetToDoListResponse>(toDoList));
+        // Projection - no need to map to DTO
+        return Ok(toDoList);
     }
 }

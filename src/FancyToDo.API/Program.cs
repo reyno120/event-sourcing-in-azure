@@ -1,3 +1,6 @@
+using FancyToDo.API;
+using FancyToDo.API.Configuration;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,10 +10,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
-builder.AddAzureCosmosClient("fancy-cosmos");
+builder.ConfigureDataStore();
 
 var app = builder.Build();
+
+await app.SeedTestData();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
