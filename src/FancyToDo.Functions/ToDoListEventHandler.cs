@@ -26,23 +26,6 @@ namespace FancyToDo.Functions
         {
             foreach (var stream in input)
                 await _mediator.Publish(stream.Deserialize());
-            
-            
-            
-            
-            // foreach (var stream in input)
-            // {
-            //     var handler = (IEventHandler)Activator.CreateInstance(
-            //         Type.GetType($"{stream.EventType.ToString()}Handler"),
-            //         // new object[] { _cosmosClient }
-            //         new object[] { }
-            //     );
-            //
-            //     if (handler is null)
-            //         return;
-            //
-            //     await handler.Handle(stream.Deserialize());
-            // }
         }
     }
 }

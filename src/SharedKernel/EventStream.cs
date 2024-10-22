@@ -4,9 +4,9 @@ namespace SharedKernel;
 
 public class EventStream
 {
-    public DateTimeOffset TimeStamp = DateTimeOffset.UtcNow;
-    public Guid EventId = Guid.NewGuid();
-    public Guid StreamId { get; init; }
+    public Guid Id { get; } =  Guid.NewGuid(); 
+    public DateTimeOffset TimeStamp { get; init; } 
+    public Guid StreamId { get; init; } 
     public Type EventType { get; init; }
     public int Version { get; init; }
     public string Payload { get; init; }

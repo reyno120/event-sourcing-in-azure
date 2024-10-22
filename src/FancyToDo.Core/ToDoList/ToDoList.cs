@@ -4,11 +4,11 @@ using SharedKernel;
 
 namespace FancyToDo.Core.ToDoList;
 
-public class ToDoList : Entity, IAggregateRoot
+public partial class ToDoList : AggregateRoot 
 {
     public string Name { get; private set; }
 
-    private readonly List<ToDoItem> _items = [];
+    private readonly List<ToDoItem> _items = []; // TODO: Standard: Task vs Item?
 
     public IReadOnlyList<ToDoItem> Items => _items.AsReadOnly();
 
@@ -20,40 +20,22 @@ public class ToDoList : Entity, IAggregateRoot
         Apply(new ToDoListCreatedEvent(this.Id, name));
     }
 
-    public void AddToDo(ToDoItem item)
+    public void AddToDo(string task)
     {
-        if (_items.Any(a => a.Task.Equals(item.Task)))
+        if (_items.Any(a => a.Task.Equals(task)))
             throw new InvalidOperationException("Task already exists with that name.");
         
-        _items.Add(item);
+        var item = new ToDoItem(task, Apply);
+        
+        Apply(new ItemAddedEvent(this.Id, item)); 
     }
 
-
-    #region Sourcing Events
-
-    public ToDoList(IEnumerable<BaseDomainEvent> events)
+    public void RenameTask(Guid taskId, string name)
     {
-        foreach (var @event in events)
-            Mutate(@event);
+        var task = _items.SingleOrDefault(w => w.Id == taskId);
+        if (task == null)
+            throw new InvalidOperationException("Item Id does not exist.");
+        
+        task.RenameTask(name);
     }
-
-    private void Apply(BaseDomainEvent @event)
-    {
-        this.AddDomainEvent(@event);
-        Mutate(@event);
-    }
-
-    private void Mutate(BaseDomainEvent @event)
-    {
-        ((dynamic)this).When((dynamic)@event);
-    }
-
-    private void When(ToDoListCreatedEvent e)
-    {
-        this.Id = e.ToDoListId;
-        this.Name = e.Name;
-    }
-    
-    #endregion
-
 }

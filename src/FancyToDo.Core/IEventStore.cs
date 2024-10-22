@@ -1,7 +1,9 @@
-﻿namespace FancyToDo.Core;
+﻿using SharedKernel;
+
+namespace FancyToDo.Core;
 
 public interface IEventStore
 {
-    Task<T?> Load<T>(Guid id);
-    // Task<IEnumerable<T>> Load<T>();
+    Task Append<T>(T aggregate) where T : AggregateRoot;
+    Task<T?> Load<T>(Guid id) where T : AggregateRoot;
 }
