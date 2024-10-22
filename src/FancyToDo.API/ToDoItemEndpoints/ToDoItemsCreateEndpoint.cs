@@ -1,5 +1,7 @@
 ﻿// using Ardalis.ApiEndpoints;
 // using FancyToDo.Core;
+// using FancyToDo.Core.ToDoList;
+// using FancyToDo.Core.ToDoList.DomainEvents;
 // using Microsoft.AspNetCore.Mvc;
 // using Swashbuckle.AspNetCore.Annotations;
 //
@@ -7,17 +9,10 @@
 //
 // public record CreateToDoItemRequest(Guid ListId, string Task);
 //
-// public class ToDoItemsCreateEndpoint : EndpointBaseAsync
+// public class ToDoItemsCreateEndpoint(IEventStore eventStore) : EndpointBaseAsync
 //     .WithRequest<CreateToDoItemRequest>
 //     .WithResult<IActionResult>
 // {
-//     private readonly IEventStore _eventStore;
-//
-//     public ToDoItemsCreateEndpoint(IEventStore eventStore)
-//     {
-//         _eventStore = eventStore;
-//     }
-//
 //     [HttpPost("/todoitems")]
 //     [SwaggerOperation(
 //         Summary = "Creates a ToDo Item",
@@ -27,13 +22,12 @@
 //     ] 
 //     public override async Task<IActionResult> HandleAsync(CreateToDoItemRequest request, CancellationToken token)
 //     {
-//         var board = await _boardRepository.Get();
-//         var list = board.ToDoLists.SingleOrDefault(s => s.Id == request.ListId);
-//         if (list is null)
+//         var toDoList = await eventStore.Load<ToDoList>(request.ListId);
+//         if (toDoList is null)
 //             throw new InvalidOperationException("ListId is Invalid");
 //         
 //         var newToDoItem = new ToDoItem(request.Task);
-//         list.AddToDo(newToDoItem);
+//         toDoList.AddToDo(newToDoItem);
 //         
 //         return NoContent(); 
 //     }

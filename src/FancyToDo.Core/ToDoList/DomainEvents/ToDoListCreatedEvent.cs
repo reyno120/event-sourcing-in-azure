@@ -1,6 +1,5 @@
-﻿using System.Text.Json.Serialization;
-using SharedKernel;
+﻿using SharedKernel;
 
-namespace FancyToDo.Core.ToDoList;
+namespace FancyToDo.Core.ToDoList.DomainEvents;
 
-public record ToDoListCreatedEvent(Guid Id, string Name) : IEvent;
+public record ToDoListCreatedEvent(Guid ToDoListId, string Name) : BaseDomainEvent;

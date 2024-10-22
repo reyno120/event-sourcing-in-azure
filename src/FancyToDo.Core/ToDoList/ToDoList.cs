@@ -1,4 +1,5 @@
 ﻿using Ardalis.GuardClauses;
+using FancyToDo.Core.ToDoList.DomainEvents;
 using SharedKernel;
 
 namespace FancyToDo.Core.ToDoList;
@@ -16,7 +17,7 @@ public class ToDoList : Entity, IAggregateRoot
         Guard.Against.NullOrEmpty(name);
         Guard.Against.LengthOutOfRange(name, 1, 50);
 
-        Apply(new ToDoListCreatedEvent(Guid.NewGuid(), name));
+        Apply(new ToDoListCreatedEvent(this.Id, name));
     }
 
     public void AddToDo(ToDoItem item)
@@ -30,26 +31,26 @@ public class ToDoList : Entity, IAggregateRoot
 
     #region Sourcing Events
 
-    public ToDoList(IEnumerable<IEvent> events)
+    public ToDoList(IEnumerable<BaseDomainEvent> events)
     {
         foreach (var @event in events)
             Mutate(@event);
     }
 
-    private void Apply(IEvent @event)
+    private void Apply(BaseDomainEvent @event)
     {
         this.AddDomainEvent(@event);
         Mutate(@event);
     }
 
-    private void Mutate(IEvent @event)
+    private void Mutate(BaseDomainEvent @event)
     {
         ((dynamic)this).When((dynamic)@event);
     }
 
     private void When(ToDoListCreatedEvent e)
     {
-        this.Id = e.Id;
+        this.Id = e.ToDoListId;
         this.Name = e.Name;
     }
     

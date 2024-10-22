@@ -1,4 +1,5 @@
 ﻿using FancyToDo.Core.ToDoList;
+using FancyToDo.Core.ToDoList.DomainEvents;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 
