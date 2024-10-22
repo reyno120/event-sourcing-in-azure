@@ -26,8 +26,6 @@ public partial class ToDoList : AggregateRoot
             throw new InvalidOperationException("Task already exists with that name.");
         
         var item = new ToDoItem(task, Apply);
-        
-        Apply(new ItemAddedEvent(this.Id, item)); 
     }
 
     public void RenameTask(Guid taskId, string name)

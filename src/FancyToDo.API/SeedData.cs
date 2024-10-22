@@ -1,7 +1,9 @@
-﻿using FancyToDo.Core.ToDoList;
+﻿using System.Text.Json;
+using FancyToDo.Core.ToDoList;
 using FancyToDo.Core.ToDoList.DomainEvents;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
+using SharedKernel;
 
 namespace FancyToDo.API;
 
@@ -17,9 +19,17 @@ public static class SeedData
       var toDoListId = Guid.NewGuid();
       
       /* Seed EventStore */
-      var containerProperties = new ContainerProperties(app.Configuration["EventStoreContainerName"], "/id");
+      var containerProperties = new ContainerProperties(app.Configuration["EventStoreContainerName"], "/streamId");
       var container = await db.Database.CreateContainerIfNotExistsAsync(containerProperties);
-      await container.Container.CreateItemAsync(new ToDoListCreatedEvent(toDoListId, "Fancy ToDo List"));
+
+      EventStream stream = new()
+      {
+         StreamId = toDoListId,
+         TimeStamp = DateTimeOffset.UtcNow,
+         EventType = typeof(ToDoListCreatedEvent),
+         Payload = JsonSerializer.Serialize(new ToDoListCreatedEvent(toDoListId, "Fancy ToDo List"))
+      };
+      await container.Container.CreateItemAsync(stream);
       
       
       /* Seed Read Model */

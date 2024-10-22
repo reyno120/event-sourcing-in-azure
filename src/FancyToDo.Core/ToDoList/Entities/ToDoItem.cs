@@ -1,4 +1,5 @@
-﻿using Ardalis.GuardClauses;
+﻿using System.Text.Json.Serialization;
+using Ardalis.GuardClauses;
 using FancyToDo.Core.ToDoList.DomainEvents;
 using SharedKernel;
 
@@ -7,9 +8,13 @@ namespace FancyToDo.Core.ToDoList;
 public class ToDoItem : Entity
 {
     private readonly Action<BaseDomainEvent> _applier;
-    public Guid Id { get; init; }
     public string Task { get; private set; }
     public string Status { get; private set; } = "To Do";
+    
+    
+    // [JsonConstructor]
+    // private ToDoItem() {}
+    
 
     internal ToDoItem(string task, Action<BaseDomainEvent> applier)
     {
@@ -18,8 +23,7 @@ public class ToDoItem : Entity
         Guard.Against.NullOrEmpty(task);
         Guard.Against.LengthOutOfRange(task, 1, 50);
 
-        this.Task = task;
-        this.Id = Guid.NewGuid();
+        _applier(new ItemAddedEvent(task));
     }
 
     internal void RenameTask(string newTaskName)
@@ -38,7 +42,15 @@ public class ToDoItem : Entity
 
         this.Status = newStatus;
     }
-    
+
+
+    #region Event Sourcing
+
+    internal ToDoItem(ItemAddedEvent @event)
+    {
+        this.Task = @event.Task;
+    }
+
     internal void Mutate(BaseDomainEvent @event)
     {
         ((dynamic)this).When((dynamic)@event);
@@ -48,4 +60,6 @@ public class ToDoItem : Entity
     {
         this.Task = e.Name;
     }
+    
+    #endregion
 }

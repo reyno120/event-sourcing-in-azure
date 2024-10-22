@@ -30,7 +30,7 @@ public partial class ToDoList
 
     private void When(ItemAddedEvent e)
     {
-        this._items.Add(e.Item);
+        this._items.Add(new ToDoItem(e));
     }
 
     private void When(TaskRenamedEvent e)

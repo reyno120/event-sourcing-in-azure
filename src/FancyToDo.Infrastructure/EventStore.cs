@@ -25,7 +25,7 @@ public class EventStore(CosmosClient cosmosClient, string dbName, string contain
                 StreamId = aggregateRoot.Id,
                 TimeStamp = domainEvent.DateOccurred,
                 EventType = domainEvent.GetType(),
-                Payload = JsonSerializer.Serialize(domainEvent)
+                Payload = JsonSerializer.Serialize(domainEvent, domainEvent.GetType())
             };
 
             batch.CreateItem(stream);
@@ -44,7 +44,9 @@ public class EventStore(CosmosClient cosmosClient, string dbName, string contain
             return default;
 
         return (T)Activator.CreateInstance(typeof(T), 
-            events.Select(s => s.Deserialize()))!;
+            events
+                .Select(s => (BaseDomainEvent)s.Deserialize())
+            )!;
     }
 
     private async Task<List<EventStream>> LoadEvents(Guid id)
