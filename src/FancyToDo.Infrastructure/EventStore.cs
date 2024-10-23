@@ -20,13 +20,14 @@ public class EventStore(CosmosClient cosmosClient, string dbName, string contain
         
         foreach (var domainEvent in aggregateRoot.DomainEvents)
         {
-            EventStream stream = new()
-            {
-                StreamId = aggregateRoot.Id,
-                TimeStamp = domainEvent.DateOccurred,
-                EventType = domainEvent.GetType(),
-                Payload = JsonSerializer.Serialize(domainEvent, domainEvent.GetType())
-            };
+            EventStream stream = new
+            (
+                streamId: aggregateRoot.Id,
+                timeStamp: domainEvent.DateOccurred,
+                eventType: domainEvent.GetType(),
+                version: 1, // TODO: Replace this
+                payload: JsonSerializer.Serialize(domainEvent, domainEvent.GetType())
+            );
 
             batch.CreateItem(stream);
         }

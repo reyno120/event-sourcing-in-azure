@@ -39,29 +39,5 @@
 //         item.SetStatus(request.Status);
 //         
 //         return NoContent();
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//         /*var
-//             purchaseOrder = _purchaseOrderRepository.Get(purchaseOrderId);
-//             
-//             var configuration = _someConfigurationOptionRepository.Get(configurationOptionId);
-//             if(configuration is null) throw exception
-//             
-//             purchaseOrder.SetConfiguration(configuration)
-//
-//
-//
-//
-//         */
-//
 //     } 
 // }

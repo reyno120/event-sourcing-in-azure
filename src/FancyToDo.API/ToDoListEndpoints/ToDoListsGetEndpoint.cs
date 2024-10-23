@@ -22,13 +22,13 @@ public class ToDoListsGetEndpoint(
     ]
     public override async Task<IActionResult> HandleAsync(CancellationToken token)
     {
+        // Retrieve from Read Model/Materialized View
         var toDoList = await repository.Get<GetToDoListResponse>()
-            .ContinueWith(c => c.Result.SingleOrDefault(), token);
+            .ContinueWith(c => c.Result.FirstOrDefault(), token);
         
         if (toDoList is null)
             return BadRequest();
 
-        // Projection - no need to map to DTO
         return Ok(toDoList);
     }
 }

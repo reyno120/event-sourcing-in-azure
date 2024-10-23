@@ -22,13 +22,14 @@ public static class SeedData
       var containerProperties = new ContainerProperties(app.Configuration["EventStoreContainerName"], "/streamId");
       var container = await db.Database.CreateContainerIfNotExistsAsync(containerProperties);
 
-      EventStream stream = new()
-      {
-         StreamId = toDoListId,
-         TimeStamp = DateTimeOffset.UtcNow,
-         EventType = typeof(ToDoListCreatedEvent),
-         Payload = JsonSerializer.Serialize(new ToDoListCreatedEvent(toDoListId, "Fancy ToDo List"))
-      };
+      EventStream stream = new
+      (
+         streamId: toDoListId,
+         timeStamp: DateTimeOffset.UtcNow,
+         eventType: typeof(ToDoListCreatedEvent),
+         version: 1,
+         payload: JsonSerializer.Serialize(new ToDoListCreatedEvent(toDoListId, "Fancy ToDo List"))
+      );
       await container.Container.CreateItemAsync(stream);
       
       
