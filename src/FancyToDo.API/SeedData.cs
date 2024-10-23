@@ -1,9 +1,7 @@
-﻿using System.Net;
-using System.Text.Json;
+﻿using System.Text.Json;
 using FancyToDo.Core.ToDoList;
 using FancyToDo.Core.ToDoList.DomainEvents;
 using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.Cosmos.Linq;
 using SharedKernel;
 
 namespace FancyToDo.API;
@@ -12,15 +10,19 @@ public static class SeedData
 {
    public static async Task SeedTestData(this WebApplication app)
    {
+      // TODO: Make Configurable
+      var databaseName = "fancy-db";
+      var eventStoreContainerName = "ToDoListEventStream";
+      var readModelContainerName = "ToDoLists";
       var cosmosClient = app.Services.GetRequiredService<CosmosClient>();
       
       // Create database if it doesn't already exist
-      var db = await cosmosClient.CreateDatabaseIfNotExistsAsync(app.Configuration["DatabaseName"]);
+      var db = await cosmosClient.CreateDatabaseIfNotExistsAsync(databaseName);
 
       var toDoListId = Guid.Parse("381cafbf-9126-43ff-bbd4-eda0eef17e97");
       
       /* Seed EventStore */
-      var containerProperties = new ContainerProperties(app.Configuration["EventStoreContainerName"], "/streamId");
+      var containerProperties = new ContainerProperties(eventStoreContainerName, "/streamId");
       var container = await db.Database.CreateContainerIfNotExistsAsync(containerProperties);
       
       EventStream stream = new
@@ -35,7 +37,7 @@ public static class SeedData
       
       
       /* Seed Read Model */
-      var readModelContainerProperties = new ContainerProperties(app.Configuration["ReadModelContainerName"], "/id");
+      var readModelContainerProperties = new ContainerProperties(readModelContainerName, "/id");
       var readModelContainer = await db.Database.CreateContainerIfNotExistsAsync(readModelContainerProperties);
       await readModelContainer.Container.UpsertItemAsync(new
          { id = toDoListId.ToString(), name = "Fancy ToDo List", items = new List<ToDoItem>() });

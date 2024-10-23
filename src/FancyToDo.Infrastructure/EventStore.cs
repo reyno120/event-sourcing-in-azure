@@ -6,9 +6,10 @@ using SharedKernel;
 
 namespace FancyToDo.Infrastructure;
 
-public class EventStore(CosmosClient cosmosClient, string dbName, string containerName) : IEventStore
+public class EventStore(CosmosClient cosmosClient) : IEventStore
 {
-    private readonly Container _container = cosmosClient.GetContainer(dbName, containerName);
+    // TODO: Make DatabaseName & ContainerName configurable
+    private readonly Container _container = cosmosClient.GetContainer("fancy-db", "ToDoListEventStream");
 
 
     public async Task Append<T>(T aggregateRoot)

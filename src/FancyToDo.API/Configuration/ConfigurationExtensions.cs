@@ -8,8 +8,6 @@ public static class ConfigurationExtensions
 {
    public static WebApplicationBuilder ConfigureDataStore(this WebApplicationBuilder builder)
    {
-      var databaseName = builder.Configuration["DatabaseName"]!;
-      
       builder.AddAzureCosmosClient(
          "local-fancy-cosmos",
          null,
@@ -22,9 +20,8 @@ public static class ConfigurationExtensions
          });
       
       var cosmosClient = builder.Services.BuildServiceProvider().GetService<CosmosClient>()!;
-      builder.Services.AddSingleton<IEventStore>(new EventStore(cosmosClient, databaseName, builder.Configuration["EventStoreContainerName"]!));
-      builder.Services.AddSingleton(new ToDoListReadRepository(cosmosClient, databaseName,
-         builder.Configuration["ReadModelContainerName"]!));
+      builder.Services.AddSingleton<IEventStore, EventStore>();
+      builder.Services.AddSingleton<ToDoListReadRepository>();
 
       return builder;
    }
