@@ -25,7 +25,7 @@ public partial class ToDoList : AggregateRoot
         if (_items.Any(a => a.Task.Equals(task)))
             throw new InvalidOperationException("Task already exists with that name.");
         
-        var item = new ToDoItem(task, Apply);
+        var item = new ToDoItem(this.Id, task, Apply);
     }
 
     public void RenameTask(Guid taskId, string name)

@@ -1,14 +1,34 @@
 ﻿using System.Diagnostics;
 using FancyToDo.Core.ToDoList.DomainEvents;
+using FancyToDo.Projections;
 using MediatR;
+using Microsoft.Azure.Cosmos;
 
 namespace FancyToDo.Functions.ItemAddedEventHandlers;
 
-public class UpdateProjection : INotificationHandler<ItemAddedEvent>
+// TODO: Don't inject IConfiguration
+// https://learn.microsoft.com/en-us/azure/azure-functions/dotnet-isolated-process-guide?tabs=hostbuilder%2Cwindows
+public class UpdateProjection(CosmosClient cosmosClient) : INotificationHandler<ItemAddedEvent>
 {
     public async Task Handle(ItemAddedEvent @event, CancellationToken cancellationToken)
     {
-        Debug.WriteLine("Create Projection");
+        var container = cosmosClient.GetContainer("fancy-db", "ToDoLists");
+
+        var newItem = new ToDoListView.ToDoListItemView()
+        {
+            Id = @event.Id,
+            Task = @event.Task,
+            Status = @event.Status
+        };
+        
+        // TODO: Patch vs Replace??
+        await container.PatchItemAsync<ToDoListView>(
+            id: @event.ToDoListId.ToString(),
+            partitionKey: new PartitionKey(@event.ToDoListId.ToString()),
+            patchOperations: new[]
+            {
+                PatchOperation.Add("/items/-", newItem),
+            }, cancellationToken: cancellationToken);
     }
 }
 

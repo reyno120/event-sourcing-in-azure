@@ -16,6 +16,7 @@
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.17.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.22.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.7.6" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
@@ -32,6 +33,7 @@
   <ItemGroup>
     <ProjectReference Include="..\FancyToDo.Core\FancyToDo.Core.csproj" />
     <ProjectReference Include="..\FancyToDo.Infrastructure\FancyToDo.Infrastructure.csproj" />
+    <ProjectReference Include="..\FancyToDo.Projections\FancyToDo.Projections.csproj" />
     <ProjectReference Include="..\SharedKernel\SharedKernel.csproj" />
   </ItemGroup>
 </Project>

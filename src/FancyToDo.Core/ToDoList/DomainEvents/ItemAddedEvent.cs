@@ -2,4 +2,4 @@
 
 namespace FancyToDo.Core.ToDoList.DomainEvents;
 
-public record ItemAddedEvent(string Task): BaseDomainEvent;
+public record ItemAddedEvent(Guid ToDoListId, Guid Id, string Task, string Status): BaseDomainEvent;

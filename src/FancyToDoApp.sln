@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedKernel", "SharedKerne
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FancyToDo.Functions", "FancyToDo.Functions\FancyToDo.Functions.csproj", "{79B369D1-73F4-4F69-AF22-86AFD4E0F150}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FancyToDo.Projections", "FancyToDo.Projections\FancyToDo.Projections.csproj", "{7639498A-2BD8-486F-9CAD-46241ED88B83}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{79B369D1-73F4-4F69-AF22-86AFD4E0F150}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79B369D1-73F4-4F69-AF22-86AFD4E0F150}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79B369D1-73F4-4F69-AF22-86AFD4E0F150}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7639498A-2BD8-486F-9CAD-46241ED88B83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7639498A-2BD8-486F-9CAD-46241ED88B83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7639498A-2BD8-486F-9CAD-46241ED88B83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7639498A-2BD8-486F-9CAD-46241ED88B83}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

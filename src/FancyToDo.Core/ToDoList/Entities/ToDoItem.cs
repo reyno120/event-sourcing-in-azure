@@ -16,14 +16,14 @@ public class ToDoItem : Entity
     // private ToDoItem() {}
     
 
-    internal ToDoItem(string task, Action<BaseDomainEvent> applier)
+    internal ToDoItem(Guid toDoListId, string task, Action<BaseDomainEvent> applier)
     {
         _applier = applier;
         
         Guard.Against.NullOrEmpty(task);
         Guard.Against.LengthOutOfRange(task, 1, 50);
 
-        _applier(new ItemAddedEvent(task));
+        _applier(new ItemAddedEvent(toDoListId, this.Id, task, this.Status));
     }
 
     internal void RenameTask(string newTaskName)
