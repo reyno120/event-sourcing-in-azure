@@ -19,7 +19,7 @@ public class EventStore(CosmosClient cosmosClient) : IEventStore
         // TODO: Handle exceptions and concurrency error
         var batch = _container.CreateTransactionalBatch(new PartitionKey(aggregateRoot.Id.ToString()));
         
-        foreach (var domainEvent in aggregateRoot.DomainEvents)
+        foreach (var domainEvent in aggregateRoot.CollectDomainEvents())
         {
             EventStream stream = new
             (

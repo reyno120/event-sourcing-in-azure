@@ -9,7 +9,7 @@ public record GetToDoListResponse(Guid Id, string Name, List<GetToDoListsRespons
 public record GetToDoListsResponseToDoItem(Guid Id, string Task, string Status);
 
 public class ToDoListsGetEndpoint(
-    ToDoListReadRepository repository) : EndpointBaseAsync
+    ToDoListReadOnlyRepository onlyRepository) : EndpointBaseAsync
     .WithoutRequest
     .WithResult<IActionResult>
 {
@@ -23,7 +23,9 @@ public class ToDoListsGetEndpoint(
     public override async Task<IActionResult> HandleAsync(CancellationToken token)
     {
         // Retrieve from Read Model/Materialized View
-        var toDoList = await repository.Get<GetToDoListResponse>()
+        // Could use the the CosmosClient, or abstract behind a read only repository
+        // I like being able to enforce read only on the read side
+        var toDoList = await onlyRepository.Get<GetToDoListResponse>()
             .ContinueWith(c => c.Result.FirstOrDefault(), token);
         
         if (toDoList is null)

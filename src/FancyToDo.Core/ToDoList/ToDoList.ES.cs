@@ -1,25 +1,16 @@
 ﻿using FancyToDo.Core.ToDoList.DomainEvents;
+using FancyToDo.Core.ToDoList.Entities.ToDoItem;
+using FancyToDo.Core.ToDoList.Entities.ToDoItem.DomainEvents;
 using SharedKernel;
 
 namespace FancyToDo.Core.ToDoList;
 
-public partial class ToDoList
+public partial class ToDoList 
 {
     public ToDoList(IEnumerable<BaseDomainEvent> events)
     {
         foreach (var @event in events)
             Mutate(@event);
-    }
-
-    private void Apply(BaseDomainEvent @event)
-    {
-        this.AddDomainEvent(@event);
-        Mutate(@event);
-    }
-    
-    private void Mutate(BaseDomainEvent @event)
-    {
-        ((dynamic)this).When((dynamic)@event);
     }
 
     private void When(ToDoListCreatedEvent e)
@@ -30,7 +21,7 @@ public partial class ToDoList
 
     private void When(ItemAddedEvent e)
     {
-        this._items.Add(new ToDoItem(e));
+        this._items.Add(e.Item);
     }
 
     private void When(TaskRenamedEvent e)

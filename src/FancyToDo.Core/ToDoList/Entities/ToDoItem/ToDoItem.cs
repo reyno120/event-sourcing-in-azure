@@ -1,29 +1,31 @@
 ﻿using System.Text.Json.Serialization;
 using Ardalis.GuardClauses;
 using FancyToDo.Core.ToDoList.DomainEvents;
+using FancyToDo.Core.ToDoList.Entities.ToDoItem.DomainEvents;
 using SharedKernel;
 
-namespace FancyToDo.Core.ToDoList;
+namespace FancyToDo.Core.ToDoList.Entities.ToDoItem;
 
 public class ToDoItem : Entity
 {
-    private readonly Action<BaseDomainEvent> _applier;
     public string Task { get; private set; }
     public string Status { get; private set; } = "To Do";
     
-    
-    // [JsonConstructor]
-    // private ToDoItem() {}
-    
-
-    internal ToDoItem(Guid toDoListId, string task, Action<BaseDomainEvent> applier)
+    [JsonConstructor]
+    private ToDoItem(Guid id, string task, string status)
     {
-        _applier = applier;
-        
+        this.Id = id;
+        this.Task = task;
+        this.Status = status;
+    }
+
+    internal ToDoItem(string task)
+    {
         Guard.Against.NullOrEmpty(task);
         Guard.Against.LengthOutOfRange(task, 1, 50);
-
-        _applier(new ItemAddedEvent(toDoListId, this.Id, task, this.Status));
+        
+        // We don't care that an item was created, just when it's been added to the aggregate
+        this.Task = task;
     }
 
     internal void RenameTask(string newTaskName)
@@ -31,11 +33,12 @@ public class ToDoItem : Entity
         Guard.Against.NullOrEmpty(newTaskName);
         Guard.Against.LengthOutOfRange(newTaskName, 1, 50);
 
-        _applier(new TaskRenamedEvent(this.Id, newTaskName));
+        Apply(new TaskRenamedEvent(this.Id, newTaskName));
     }
 
     internal void SetStatus(string newStatus)
     {
+        // TODO
         var isStatusValid = newStatus.Equals("To Do") || newStatus.Equals("In Progress") || newStatus.Equals("Done");
         if (!isStatusValid)
             throw new InvalidOperationException("Status is invalid.");
@@ -45,16 +48,6 @@ public class ToDoItem : Entity
 
 
     #region Event Sourcing
-
-    internal ToDoItem(ItemAddedEvent @event)
-    {
-        this.Task = @event.Task;
-    }
-
-    internal void Mutate(BaseDomainEvent @event)
-    {
-        ((dynamic)this).When((dynamic)@event);
-    }
 
     private void When(TaskRenamedEvent e)
     {

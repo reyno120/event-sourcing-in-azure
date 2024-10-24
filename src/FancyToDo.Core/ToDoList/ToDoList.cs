@@ -1,5 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 using FancyToDo.Core.ToDoList.DomainEvents;
+using FancyToDo.Core.ToDoList.Entities.ToDoItem;
 using SharedKernel;
 
 namespace FancyToDo.Core.ToDoList;
@@ -24,8 +25,9 @@ public partial class ToDoList : AggregateRoot
     {
         if (_items.Any(a => a.Task.Equals(task)))
             throw new InvalidOperationException("Task already exists with that name.");
-        
-        var item = new ToDoItem(this.Id, task, Apply);
+
+        var item = new ToDoItem(task);
+        Apply(new ItemAddedEvent(this.Id, item));
     }
 
     public void RenameTask(Guid taskId, string name)

@@ -21,7 +21,7 @@ public static class ConfigurationExtensions
       
       var cosmosClient = builder.Services.BuildServiceProvider().GetService<CosmosClient>()!;
       builder.Services.AddSingleton<IEventStore, EventStore>();
-      builder.Services.AddSingleton<ToDoListReadRepository>();
+      builder.Services.AddSingleton<ToDoListReadOnlyRepository>();
 
       return builder;
    }

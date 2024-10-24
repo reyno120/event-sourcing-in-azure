@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using FancyToDo.Core.ToDoList;
 using FancyToDo.Core.ToDoList.DomainEvents;
+using FancyToDo.Core.ToDoList.Entities.ToDoItem;
 using Microsoft.Azure.Cosmos;
 using SharedKernel;
 

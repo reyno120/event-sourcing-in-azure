@@ -12,22 +12,23 @@ public class UpdateProjection(CosmosClient cosmosClient) : INotificationHandler<
 {
     public async Task Handle(ItemAddedEvent @event, CancellationToken cancellationToken)
     {
+        // TODO: Make Configurable
         var container = cosmosClient.GetContainer("fancy-db", "ToDoLists");
 
-        var newItem = new ToDoListView.ToDoListItemView()
+        var item = new ToDoListItemView()
         {
-            Id = @event.Id,
-            Task = @event.Task,
-            Status = @event.Status
+            Id = @event.Item.Id,
+            Task = @event.Item.Task,
+            Status = @event.Item.Status
         };
-        
+
         // TODO: Patch vs Replace??
         await container.PatchItemAsync<ToDoListView>(
             id: @event.ToDoListId.ToString(),
             partitionKey: new PartitionKey(@event.ToDoListId.ToString()),
             patchOperations: new[]
             {
-                PatchOperation.Add("/items/-", newItem),
+                PatchOperation.Add("/items/-", item),
             }, cancellationToken: cancellationToken);
     }
 }

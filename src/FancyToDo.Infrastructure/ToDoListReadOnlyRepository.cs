@@ -3,7 +3,7 @@ using Microsoft.Azure.Cosmos.Linq;
 
 namespace FancyToDo.Infrastructure;
 
-public class ToDoListReadRepository(CosmosClient cosmosClient)
+public class ToDoListReadOnlyRepository(CosmosClient cosmosClient)
 {
     // TODO: Make DatabaseName & ContainerName Configurable
     private readonly Container _container = cosmosClient.GetContainer("fancy-db", "ToDoLists");

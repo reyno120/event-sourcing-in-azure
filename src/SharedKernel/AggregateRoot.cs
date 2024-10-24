@@ -1,19 +1,18 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Collections;
 
 namespace SharedKernel;
 
 public abstract class AggregateRoot : Entity 
 {
-   private readonly List<BaseDomainEvent> _domainEvents = [];
-   public IReadOnlyList<BaseDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+    protected new void Mutate(BaseDomainEvent @event)
+    {
+        base.Mutate(@event);
+    }
 
-   public void AddDomainEvent(BaseDomainEvent domainEvent)
-   {
-      _domainEvents.Add(domainEvent);
-   }
-
-   public void ClearDomainEvents()
-   {
-      _domainEvents.Clear();
-   }
+    public new List<BaseDomainEvent> CollectDomainEvents()
+    {
+        return base.CollectDomainEvents()
+            .OrderBy(o => o.DateOccurred)
+            .ToList();
+    }
 }

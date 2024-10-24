@@ -15,6 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="ToDoList\Entities\ToDoItem\Exceptions\" />
       <Folder Include="ToDoList\Exceptions\" />
       <Folder Include="ToDoList\ValueObjects\" />
     </ItemGroup>
