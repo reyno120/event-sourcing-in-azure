@@ -1,6 +1,5 @@
 ﻿using System.Text.Json.Serialization;
 using Ardalis.GuardClauses;
-using FancyToDo.Core.ToDoList.DomainEvents;
 using FancyToDo.Core.ToDoList.Entities.ToDoItem.DomainEvents;
 using SharedKernel;
 

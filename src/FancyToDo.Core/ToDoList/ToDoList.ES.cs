@@ -1,4 +1,5 @@
-﻿using FancyToDo.Core.ToDoList.DomainEvents;
+﻿using System.Text.Json;
+using FancyToDo.Core.ToDoList.DomainEvents;
 using FancyToDo.Core.ToDoList.Entities.ToDoItem;
 using FancyToDo.Core.ToDoList.Entities.ToDoItem.DomainEvents;
 using SharedKernel;
@@ -21,7 +22,7 @@ public partial class ToDoList
 
     private void When(ItemAddedEvent e)
     {
-        this._items.Add(e.Item);
+        this._items.Add(JsonSerializer.Deserialize<ToDoItem>(e.Item)!);
     }
 
     private void When(TaskRenamedEvent e)

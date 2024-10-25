@@ -24,7 +24,7 @@ public class EventStore(CosmosClient cosmosClient) : IEventStore
             EventStream stream = new
             (
                 streamId: aggregateRoot.Id,
-                timeStamp: domainEvent.DateOccurred,
+                timeStamp: domainEvent.DateOccurred,    //TODO: This is being serialized in the payload
                 eventType: domainEvent.GetType(),
                 version: 1, // TODO: Replace this
                 payload: JsonSerializer.Serialize(domainEvent, domainEvent.GetType())
