@@ -26,7 +26,7 @@ public class EventStore(CosmosClient cosmosClient) : IEventStore
                 streamId: aggregateRoot.Id,
                 timeStamp: domainEvent.DateOccurred,    //TODO: This is being serialized in the payload
                 eventType: domainEvent.GetType(),
-                version: 1, // TODO: Replace this
+                version: 1, // TODO: Implement versioning & handle concurrency
                 payload: JsonSerializer.Serialize(domainEvent, domainEvent.GetType())
             );
 
@@ -53,8 +53,11 @@ public class EventStore(CosmosClient cosmosClient) : IEventStore
 
     private async Task<List<EventStream>> LoadEvents(Guid id)
     {
+        // Query CosmosDB Event Stream
+        // StreamId = AggregateId = Partition Key
         IOrderedQueryable<EventStream> queryable = _container.GetItemLinqQueryable<EventStream>();
 
+        // TODO: Order by version
         var matches = queryable
             .Where(w => w.StreamId == id);
 

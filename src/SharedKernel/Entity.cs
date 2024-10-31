@@ -21,7 +21,7 @@ public abstract class Entity
       // Get Handlers
       var handlers = this.GetType()
          .GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
-         .Where(w => w.Name.Equals("When"));
+         .Where(w => w.Name.Equals("Handle"));
 
       // Add handlers to dictionary for faster lookup
       foreach (var handler in handlers)
@@ -79,7 +79,7 @@ public abstract class Entity
     
    public void Mutate(BaseDomainEvent @event)
    {
-      // TODO: Use reflection to get correct "When" method - will be slower with lots of events
+      // TODO: Use reflection to get correct "Handle" method - will be slower with lots of events
       // vs. dynamically calling "When" method - duplicate Apply & Mutate methods in every Aggregate/Entity
       // but potentially faster
       

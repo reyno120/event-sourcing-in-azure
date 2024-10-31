@@ -9,7 +9,7 @@ public class EventStream(DateTimeOffset timeStamp, Guid streamId, Type eventType
     
     public DateTimeOffset TimeStamp { get; init; } = timeStamp;
     
-    public Guid StreamId { get; init; } = streamId;
+    public Guid StreamId { get; init; } = streamId; // AggregateId & Our Partition Key
     
     [JsonConverter(typeof(TypeJsonConverter))]
     public Type EventType { get; init; } = eventType;

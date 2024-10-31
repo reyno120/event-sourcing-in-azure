@@ -48,7 +48,7 @@ public class ToDoItem : Entity
 
     #region Event Sourcing
 
-    private void When(TaskRenamedEvent e)
+    private void Handle(TaskRenamedEvent e)
     {
         this.Task = e.Name;
     }

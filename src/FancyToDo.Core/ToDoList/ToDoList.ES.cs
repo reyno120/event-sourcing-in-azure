@@ -14,18 +14,18 @@ public partial class ToDoList
             Mutate(@event);
     }
 
-    private void When(ToDoListCreatedEvent e)
+    private void Handle(ToDoListCreatedEvent e)
     {
         this.Id = e.ToDoListId;
         this.Name = e.Name;
     }
 
-    private void When(ItemAddedEvent e)
+    private void Handle(ItemAddedEvent e)
     {
         this._items.Add(JsonSerializer.Deserialize<ToDoItem>(e.Item)!);
     }
 
-    private void When(TaskRenamedEvent e)
+    private void Handle(TaskRenamedEvent e)
     {
         _items
             .Single(s => s.Id == e.TaskId)
