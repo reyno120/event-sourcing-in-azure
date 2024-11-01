@@ -49,7 +49,6 @@ public abstract class Entity
       // If it's an Enumerable Type, Loop Through Each Item Collecting It's Domain Events
       foreach (var entityTypeProperty in entityTypeProperties)
       {
-         // If Enumerable
          var propertyValue = entityTypeProperty.GetValue(this)!;
          if (propertyValue.GetType().IsAssignableTo(typeof(IEnumerable)))
          {

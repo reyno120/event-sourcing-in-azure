@@ -43,7 +43,7 @@ public class EventStore(CosmosClient cosmosClient) : IEventStore
     {
         var events = await LoadEvents(id);
         if (events.Count == 0) 
-            return default;
+            return default;     // TODO: Throw exception instead of return default 
 
         return (T)Activator.CreateInstance(typeof(T), 
             events
