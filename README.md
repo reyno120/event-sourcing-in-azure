@@ -1,6 +1,6 @@
 ![image](https://github.com/user-attachments/assets/ddd3ab2a-bfab-4a66-9280-010964821cb6)
 # Event Sourcing in Azure
-[Event Sourcing](https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing) is a pattern used to capture changes made to data over time. Rather than storing the current state of an object, you append the actions (events) taken upon that object to a read-only event store. By replaying the events in the order they were persisted, you obtain the current state of that object. When used with a [CQRS](https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs) approach, you can create read models or [Materialized Views](https://learn.microsoft.com/en-us/azure/architecture/patterns/materialized-view) to highly optimize an application's reads. Azure CosmosDB and Azure Functions allow us to react events, providing a lot of extensability when implementing this pattern.
+[Event Sourcing](https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing) is a pattern used to capture changes made to data over time. Rather than storing the current state of an object, you append the actions (events) taken upon that object to a read-only event store. By replaying the events in the order they were persisted, you obtain the current state of that object. When used with a [CQRS](https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs) approach, you can create read models or [Materialized Views](https://learn.microsoft.com/en-us/azure/architecture/patterns/materialized-view) to highly optimize an application's reads. Event sourcing is useful when your application requires full visibilty. That is, when you need to know the full history of your data and how it got there. This sample demonstrates how to leverage the power of Azure CosmosDB, Azure Functions, and Domain Driven Design techniques to practically implement Event Sourcing.
 
 ## Understanding Domain Events
 Domain Events is a pattern stemming from [Domain Driven Design](https://martinfowler.com/bliki/DomainDrivenDesign.html) that allow us to explicitly model and decouple side effects from our core domain logic. Through "Event Handlers", we can react to domain events to trigger additional behavior within the same domain that the event was raised in. Domain events also allow us to extend our application by simply adding more event handlers when needed, following the Open/Closed SOLID Principle.
@@ -8,6 +8,8 @@ Domain Events is a pattern stemming from [Domain Driven Design](https://martinfo
 While Event Sourcing is still achievable without using DDD and Domain Events, it is far more practical when making use of these modeling techniques.
 
 For more information about Domain Events, check out [Domain events: Design and implementation](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-events-design-implementation)
+
+For more information about Domain Driven Design, checkout the Domain Driven Design Fundamentals sample and Pluralsight course: [DDD Fundamentals](https://github.com/ardalis/pluralsight-ddd-fundamentals)
 
 
 ## The Write Side
