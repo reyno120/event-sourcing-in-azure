@@ -1,4 +1,5 @@
-![image](https://github.com/user-attachments/assets/ddd3ab2a-bfab-4a66-9280-010964821cb6)
+![image](https://github.com/user-attachments/assets/3b40e1ce-9712-4027-b08b-b491ab2cf987)
+
 # Event Sourcing in Azure
 [Event Sourcing](https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing) is a pattern used to capture changes made to data over time. Rather than storing the current state of an object, you append the actions (events) taken upon that object to a read-only event store. By replaying the events in the order they were persisted, you obtain the current state of that object. When used with a [CQRS](https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs) approach, you can create read models or [Materialized Views](https://learn.microsoft.com/en-us/azure/architecture/patterns/materialized-view) to highly optimize an application's reads. Event sourcing is useful when your application requires full visibilty. That is, when you need to know the full history of your data and how it got there. This sample demonstrates how to leverage the power of Azure CosmosDB, Azure Functions, and Domain Driven Design techniques to practically implement Event Sourcing.
 
