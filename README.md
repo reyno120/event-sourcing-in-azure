@@ -39,12 +39,14 @@ By creating a projection during the write process, the read side is simplified. 
 
 
 ## Running the Sample App
-To run the sample, make sure the following are installed. Run the AppHost and Azure Function App. Aspire will take care of the rest.
+To run the sample, make sure the following are installed.
 - .NET 8.0
 - .NET Aspire workload (through VS Installer or CLI)
 - .NET Azure development workload (through VS Installer or CLI)
 - Docker Desktop
 - [CosmosDB Emulator](https://learn.microsoft.com/en-us/azure/cosmos-db/how-to-develop-emulator?tabs=windows%2Ccsharp&pivots=api-nosql#install-the-emulator)
+
+Add your connection string to the CosmosDB Emulator to the appsettings.json file in the AppHost project. Run the AppHost and Azure Function App. Aspire will take care of the rest.
 
 
 
