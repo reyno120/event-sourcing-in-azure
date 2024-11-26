@@ -8,13 +8,8 @@ namespace FancyToDo.Core.ToDoList;
 
 public partial class ToDoList 
 {
-    public ToDoList(IEnumerable<BaseDomainEvent> events)
+    public ToDoList(IEnumerable<BaseDomainEvent> events) : base(events)
     {
-        foreach (var @event in events)
-        { 
-            _version++;
-            Mutate(@event);
-        }
     }
 
     private void Handle(ToDoListCreatedEvent e)

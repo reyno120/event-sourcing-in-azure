@@ -7,10 +7,16 @@ public abstract class AggregateRoot : Entity
     protected int _version { get; init; } = 0;
     public int Version => _version;
 
-    protected new void Mutate(BaseDomainEvent @event)
+    protected AggregateRoot(IEnumerable<BaseDomainEvent> events)
     {
-        base.Mutate(@event);
+        foreach (var @event in events)
+        { 
+            _version++;
+            base.Mutate(@event);
+        }
     }
+    
+    protected AggregateRoot() {}
 
     public new List<BaseDomainEvent> CollectDomainEvents()
     {

@@ -12,15 +12,12 @@ namespace FancyToDo.Infrastructure;
 public class EventStore(CosmosClient cosmosClient, IOptions<EventStoreOptions> options)
     : IEventStore
 {
-    // TODO: Make DatabaseName & ContainerName configurable
     private readonly Container _container = cosmosClient
         .GetContainer(options.Value.DatabaseName, options.Value.ContainerName);
 
     public async Task Append<T>(T aggregateRoot)
         where T : AggregateRoot 
     {
-        // TODO: need to save version as row key so it throws an exception when trying to append same version
-        // TODO: Handle exceptions and concurrency error
         var batch = _container.CreateTransactionalBatch(new PartitionKey(aggregateRoot.Id.ToString()));
 
         var version = aggregateRoot.Version;

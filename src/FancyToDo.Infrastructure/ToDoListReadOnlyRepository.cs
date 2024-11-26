@@ -1,12 +1,14 @@
-﻿using Microsoft.Azure.Cosmos;
+﻿using FancyToDo.Infrastructure.Configuration;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
+using Microsoft.Extensions.Options;
 
 namespace FancyToDo.Infrastructure;
 
-public class ToDoListReadOnlyRepository(CosmosClient cosmosClient)
+public class ToDoListReadOnlyRepository(CosmosClient cosmosClient, IOptions<ProjectionOptions> options)
 {
-    // TODO: Make DatabaseName & ContainerName Configurable
-    private readonly Container _container = cosmosClient.GetContainer("fancy-db", "ToDoLists");
+    private readonly Container _container = cosmosClient
+        .GetContainer(options.Value.DatabaseName, options.Value.ContainerName);
 
     public async Task<IEnumerable<T>> Get<T>()
     {

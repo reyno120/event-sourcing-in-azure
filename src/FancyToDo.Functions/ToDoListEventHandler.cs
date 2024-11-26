@@ -9,11 +9,16 @@ namespace FancyToDo.Functions
     {
         private readonly ILogger _logger = loggerFactory.CreateLogger<ToDoListEventHandler>();
 
+        // Local settings and publishing to Azure
+        // https://learn.microsoft.com/en-us/azure/azure-functions/functions-develop-local#local-settings-file
+        
+        // Accessing 
+        // https://learn.microsoft.com/en-us/azure/azure-functions/functions-dotnet-class-library?tabs=v4%2Ccmd#environment-variables
         [Function("ToDoListEventHandler")]  // TODO: change this name
         public async Task Run([CosmosDBTrigger(
-            databaseName: "fancy-db",
-            containerName: "ToDoListEventStream",
-            Connection = "fancy-db",
+            databaseName: "%DatabaseName%",
+            containerName: "%ContainerName%",
+            Connection = "CosmosDBConnectionString",
             LeaseContainerName = "leases",
             CreateLeaseContainerIfNotExists = true)] IReadOnlyList<EventStream> input)
         {
