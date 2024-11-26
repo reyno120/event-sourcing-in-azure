@@ -6,8 +6,7 @@ using Microsoft.Azure.Cosmos;
 
 namespace FancyToDo.Functions.ToDoListCreatedEventHandlers;
 
-// TODO: Don't inject IConfiguration
-// https://learn.microsoft.com/en-us/azure/azure-functions/dotnet-isolated-process-guide?tabs=hostbuilder%2Cwindows
+
 public class CreateProjection(CosmosClient cosmosClient) : INotificationHandler<ToDoListCreatedEvent>
 {
     public async Task Handle(ToDoListCreatedEvent @event, CancellationToken cancellationToken)

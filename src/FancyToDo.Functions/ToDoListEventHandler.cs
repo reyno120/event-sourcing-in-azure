@@ -12,9 +12,9 @@ namespace FancyToDo.Functions
         // Local settings and publishing to Azure
         // https://learn.microsoft.com/en-us/azure/azure-functions/functions-develop-local#local-settings-file
         
-        // Accessing 
+        // Accessing environment variables
         // https://learn.microsoft.com/en-us/azure/azure-functions/functions-dotnet-class-library?tabs=v4%2Ccmd#environment-variables
-        [Function("ToDoListEventHandler")]  // TODO: change this name
+        [Function("ToDoListEventStreamHandler")]  
         public async Task Run([CosmosDBTrigger(
             databaseName: "%DatabaseName%",
             containerName: "%ContainerName%",

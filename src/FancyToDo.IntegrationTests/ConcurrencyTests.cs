@@ -27,7 +27,6 @@ namespace FancyToDo.IntegrationTests.Tests
 				payload: JsonSerializer.Serialize(new ToDoListCreatedEvent(_toDoListId, "Fancy ToDo List"))
 			);
 
-			// TODO: Best way to call async method sync??
 			await fixture.EventStoreContainer.CreateItemAsync(stream);
 			
 
@@ -66,7 +65,6 @@ namespace FancyToDo.IntegrationTests.Tests
 				payload: JsonSerializer.Serialize(new ToDoListCreatedEvent(_toDoListId, "Fancy ToDo List"))
 			);
 
-			// TODO: Best way to call async method sync??
 			await fixture.EventStoreContainer.CreateItemAsync(stream);
 			
 

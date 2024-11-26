@@ -15,8 +15,8 @@ public class UpdateProjection(CosmosClient cosmosClient, IOptions<ProjectionOpti
 {
     public async Task Handle(ItemAddedEvent @event, CancellationToken cancellationToken)
     {
-        // TODO: Make Configurable
-        var container = cosmosClient.GetContainer(options.Value.DatabaseName, options.Value.ContainerName);
+        var container = cosmosClient
+            .GetContainer(options.Value.DatabaseName, options.Value.ContainerName);
 
         var item = JsonSerializer.Deserialize<ToDoItem>(@event.Item)!;
         var itemView = new ToDoListItemView()

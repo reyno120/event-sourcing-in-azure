@@ -78,10 +78,6 @@ public abstract class Entity
     
    public void Mutate(BaseDomainEvent @event)
    {
-      // TODO: Use reflection to get correct "Handle" method - will be slower with lots of events
-      // vs. dynamically calling "When" method - duplicate Apply & Mutate methods in every Aggregate/Entity
-      // but potentially faster
-      
       _handlers.TryGetValue(@event.GetType(), out MethodInfo? handler);
       handler?.Invoke(this, [@event]);
 

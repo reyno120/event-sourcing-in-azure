@@ -8,7 +8,7 @@ using SharedKernel;
 
 namespace FancyToDo.Infrastructure;
 
-// TODO: Move this to SharedKernel w/ EventStoreOptions?
+// TODO: Move this to SharedKernel w/ EventStoreOptions & EventStream?
 public class EventStore(CosmosClient cosmosClient, IOptions<EventStoreOptions> options)
     : IEventStore
 {
@@ -63,9 +63,9 @@ public class EventStore(CosmosClient cosmosClient, IOptions<EventStoreOptions> o
         // StreamId = AggregateId = Partition Key
         IOrderedQueryable<EventStream> queryable = _container.GetItemLinqQueryable<EventStream>();
 
-        // TODO: Order by version
         var matches = queryable
-            .Where(w => w.StreamId == id);
+            .Where(w => w.StreamId == id)
+            .OrderBy(o => o.Version);
 
         using FeedIterator<EventStream> linqFeed = matches.ToFeedIterator();
 

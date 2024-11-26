@@ -9,7 +9,7 @@ public partial class ToDoList : AggregateRoot
 {
     public string Name { get; private set; }
 
-    private readonly List<ToDoItem> _items = []; // TODO: Standard: Task vs Item?
+    private readonly List<ToDoItem> _items = []; 
 
     public IReadOnlyList<ToDoItem> Items => _items.AsReadOnly();
 

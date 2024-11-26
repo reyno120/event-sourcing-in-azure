@@ -14,7 +14,7 @@ public class EventStream(DateTimeOffset timeStamp, Guid streamId, Type eventType
     [JsonConverter(typeof(TypeJsonConverter))]
     public Type EventType { get; init; } = eventType;
     
-    public int Version { get; init; } = version;
+    public int Version { get; init; } = version;    // Unique Key
     
     public string Payload { get; init; } = payload;
 }
