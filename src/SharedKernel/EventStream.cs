@@ -9,12 +9,14 @@ public class EventStream(DateTimeOffset timeStamp, Guid streamId, Type eventType
     
     public DateTimeOffset TimeStamp { get; init; } = timeStamp;
     
+    [PartitionKey("/streamId")]
     public Guid StreamId { get; init; } = streamId; // AggregateId & Our Partition Key
     
     [JsonConverter(typeof(TypeJsonConverter))]
     public Type EventType { get; init; } = eventType;
     
-    public int Version { get; init; } = version;
+    [UniqueKey("/version")]
+    public int Version { get; init; } = version;    // Unique Key
     
     public string Payload { get; init; } = payload;
 }
@@ -42,4 +44,17 @@ public class TypeJsonConverter : JsonConverter<Type>
         Type type,
         JsonSerializerOptions options) =>
         writer.WriteStringValue(type.AssemblyQualifiedName);
+}
+
+
+[System.AttributeUsage(System.AttributeTargets.Property, AllowMultiple = false)]
+public class PartitionKey(string path) : Attribute
+{
+    public string Path { get; } = path;
+}
+
+[System.AttributeUsage(System.AttributeTargets.Property, AllowMultiple = true)]
+public class UniqueKey(string path) : Attribute
+{
+    public string Path { get; } = path;
 }
