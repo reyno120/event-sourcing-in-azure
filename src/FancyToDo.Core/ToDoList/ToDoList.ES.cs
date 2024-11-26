@@ -11,7 +11,10 @@ public partial class ToDoList
     public ToDoList(IEnumerable<BaseDomainEvent> events)
     {
         foreach (var @event in events)
+        { 
+            _version++;
             Mutate(@event);
+        }
     }
 
     private void Handle(ToDoListCreatedEvent e)

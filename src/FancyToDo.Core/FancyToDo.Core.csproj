@@ -20,4 +20,8 @@
       <Folder Include="ToDoList\ValueObjects\" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="FancyToDo.IntegrationTests" />
+    </ItemGroup>
+
 </Project>

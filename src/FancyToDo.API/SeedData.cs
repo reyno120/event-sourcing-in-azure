@@ -12,19 +12,25 @@ public static class SeedData
    public static async Task SeedTestData(this WebApplication app)
    {
       // TODO: Make Configurable
-      var databaseName = "fancy-db";
-      var eventStoreContainerName = "ToDoListEventStream";
-      var readModelContainerName = "ToDoLists";
+      const string databaseName = "fancy-db";
+      const string eventStoreContainerName = "ToDoListEventStream";
+      const string readModelContainerName = "ToDoLists";
+      
       var cosmosClient = app.Services.GetRequiredService<CosmosClient>();
       
       // Create database if it doesn't already exist
       var db = await cosmosClient.CreateDatabaseIfNotExistsAsync(databaseName);
+      
+      // Create container if it doesn't already exist
+      var container = await db.Database.DefineContainer(eventStoreContainerName, "/streamId")
+         .WithUniqueKey()
+         .Path("/version")
+         .Attach()
+         .CreateIfNotExistsAsync();
 
-      var toDoListId = Guid.Parse("381cafbf-9126-43ff-bbd4-eda0eef17e97");
       
       /* Seed EventStore */
-      var containerProperties = new ContainerProperties(eventStoreContainerName, "/streamId");
-      var container = await db.Database.CreateContainerIfNotExistsAsync(containerProperties);
+      var toDoListId = Guid.Parse("381cafbf-9126-43ff-bbd4-eda0eef17e97");
       
       EventStream stream = new
       (

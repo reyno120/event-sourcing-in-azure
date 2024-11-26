@@ -1,5 +1,6 @@
 ﻿using FancyToDo.Core;
 using FancyToDo.Infrastructure;
+using FancyToDo.Infrastructure.Configuration;
 using Microsoft.Azure.Cosmos;
 
 namespace FancyToDo.API.Configuration;
@@ -18,8 +19,8 @@ public static class ConfigurationExtensions
                PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase
             };
          });
-      
-      var cosmosClient = builder.Services.BuildServiceProvider().GetService<CosmosClient>()!;
+
+      builder.Services.Configure<EventStoreOptions>(builder.Configuration.GetSection(EventStoreOptions.EventStore));
       builder.Services.AddSingleton<IEventStore, EventStore>();
       builder.Services.AddSingleton<ToDoListReadOnlyRepository>();
 

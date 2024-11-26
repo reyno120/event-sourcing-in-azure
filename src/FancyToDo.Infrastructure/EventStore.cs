@@ -1,16 +1,20 @@
 ﻿using System.Text.Json;
 using FancyToDo.Core;
+using FancyToDo.Infrastructure.Configuration;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
+using Microsoft.Extensions.Options;
 using SharedKernel;
 
 namespace FancyToDo.Infrastructure;
 
-public class EventStore(CosmosClient cosmosClient) : IEventStore
+// TODO: Move this to SharedKernel w/ EventStoreOptions?
+public class EventStore(CosmosClient cosmosClient, IOptions<EventStoreOptions> options)
+    : IEventStore
 {
     // TODO: Make DatabaseName & ContainerName configurable
-    private readonly Container _container = cosmosClient.GetContainer("fancy-db", "ToDoListEventStream");
-
+    private readonly Container _container = cosmosClient
+        .GetContainer(options.Value.DatabaseName, options.Value.ContainerName);
 
     public async Task Append<T>(T aggregateRoot)
         where T : AggregateRoot 
@@ -18,7 +22,8 @@ public class EventStore(CosmosClient cosmosClient) : IEventStore
         // TODO: need to save version as row key so it throws an exception when trying to append same version
         // TODO: Handle exceptions and concurrency error
         var batch = _container.CreateTransactionalBatch(new PartitionKey(aggregateRoot.Id.ToString()));
-        
+
+        var version = aggregateRoot.Version;
         foreach (var domainEvent in aggregateRoot.CollectDomainEvents())
         {
             EventStream stream = new
@@ -26,14 +31,18 @@ public class EventStore(CosmosClient cosmosClient) : IEventStore
                 streamId: aggregateRoot.Id,
                 timeStamp: domainEvent.DateOccurred,    //TODO: This is being serialized in the payload
                 eventType: domainEvent.GetType(),
-                version: 1, // TODO: Implement versioning & handle concurrency
+                version: ++version, 
                 payload: JsonSerializer.Serialize(domainEvent, domainEvent.GetType())
             );
 
             batch.CreateItem(stream);
         }
 
-        await batch.ExecuteAsync();
+        // TODO: Best way to throw/handle exception?
+        using TransactionalBatchResponse response = await batch.ExecuteAsync();
+        if (!response.IsSuccessStatusCode)
+            throw new CosmosException(response.ErrorMessage, response.StatusCode, 0, response.ActivityId, response.RequestCharge);
+        
         
         aggregateRoot.ClearDomainEvents();
     }

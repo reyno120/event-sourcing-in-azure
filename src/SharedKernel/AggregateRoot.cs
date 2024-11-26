@@ -2,8 +2,11 @@
 
 namespace SharedKernel;
 
-public abstract class AggregateRoot : Entity 
+public abstract class AggregateRoot : Entity
 {
+    protected int _version { get; init; } = 0;
+    public int Version => _version;
+
     protected new void Mutate(BaseDomainEvent @event)
     {
         base.Mutate(@event);
