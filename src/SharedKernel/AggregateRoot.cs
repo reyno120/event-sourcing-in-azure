@@ -4,14 +4,13 @@ namespace SharedKernel;
 
 public abstract class AggregateRoot : Entity
 {
-    protected int _version { get; init; } = 0;
-    public int Version => _version;
+    public int Version { get; init; } = 0; 
 
     protected AggregateRoot(IEnumerable<BaseDomainEvent> events)
     {
         foreach (var @event in events)
         { 
-            _version++;
+            Version++;
             base.Mutate(@event);
         }
     }
