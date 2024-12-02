@@ -2,7 +2,7 @@
 using FancyToDo.Core.ToDoList.DomainEvents;
 using FancyToDo.Core.ToDoList.Entities.ToDoItem;
 using FancyToDo.Core.ToDoList.Entities.ToDoItem.DomainEvents;
-using SharedKernel;
+using SharedKernel.EventSourcing.Core;
 
 namespace FancyToDo.Core.ToDoList;
 

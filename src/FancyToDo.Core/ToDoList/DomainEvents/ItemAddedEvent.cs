@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using FancyToDo.Core.ToDoList.Entities.ToDoItem;
-using SharedKernel;
+using SharedKernel.EventSourcing.Core;
 
 namespace FancyToDo.Core.ToDoList.DomainEvents;
 

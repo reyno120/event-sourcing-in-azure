@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FancyToDo.Core", "FancyToDo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FancyToDo.Infrastructure", "FancyToDo.Infrastructure\FancyToDo.Infrastructure.csproj", "{11CB6D4F-C2C9-4A5F-8640-32CB4F033EA6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedKernel", "SharedKernel\SharedKernel.csproj", "{DEBE92DB-FA58-45A3-9E06-780FD30C4DF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedKernel.EventSourcing.Core", "SharedKernel.EventSourcing.Core\SharedKernel.EventSourcing.Core.csproj", "{DEBE92DB-FA58-45A3-9E06-780FD30C4DF7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FancyToDo.Functions", "FancyToDo.Functions\FancyToDo.Functions.csproj", "{79B369D1-73F4-4F69-AF22-86AFD4E0F150}"
 EndProject
@@ -20,6 +20,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FancyToDo.UnitTests", "FancyToDo.UnitTests\FancyToDo.UnitTests.csproj", "{CDA32ACE-D1F3-4993-916F-BF68E6F1E089}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FancyToDo.IntegrationTests", "FancyToDo.IntegrationTests\FancyToDo.IntegrationTests.csproj", "{88DABA51-6BC6-4835-AEBA-7DC46555CEC6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{A2AA4257-312C-4605-937F-BFE8219F9C02}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.EventSourcing.EventStore", "SharedKernel.EventSourcing.EventStore\SharedKernel.EventSourcing.EventStore.csproj", "{CE71017F-0ECC-4689-A935-B19B9D20C4E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,8 +67,16 @@ Global
 		{88DABA51-6BC6-4835-AEBA-7DC46555CEC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88DABA51-6BC6-4835-AEBA-7DC46555CEC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88DABA51-6BC6-4835-AEBA-7DC46555CEC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE71017F-0ECC-4689-A935-B19B9D20C4E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE71017F-0ECC-4689-A935-B19B9D20C4E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE71017F-0ECC-4689-A935-B19B9D20C4E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE71017F-0ECC-4689-A935-B19B9D20C4E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DEBE92DB-FA58-45A3-9E06-780FD30C4DF7} = {A2AA4257-312C-4605-937F-BFE8219F9C02}
+		{CE71017F-0ECC-4689-A935-B19B9D20C4E8} = {A2AA4257-312C-4605-937F-BFE8219F9C02}
 	EndGlobalSection
 EndGlobal

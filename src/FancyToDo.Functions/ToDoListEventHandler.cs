@@ -1,7 +1,7 @@
 using MediatR;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
-using SharedKernel;
+using SharedKernel.EventSourcing.EventStore;
 
 namespace FancyToDo.Functions
 {

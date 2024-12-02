@@ -1,7 +1,7 @@
 ﻿using Ardalis.ApiEndpoints;
-using FancyToDo.Core;
 using FancyToDo.Core.ToDoList;
 using Microsoft.AspNetCore.Mvc;
+using SharedKernel.EventSourcing.Core;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace FancyToDo.API.ToDoItemEndpoints;

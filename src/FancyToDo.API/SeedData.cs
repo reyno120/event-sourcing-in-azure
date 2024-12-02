@@ -4,7 +4,7 @@ using FancyToDo.Core.ToDoList.Entities.ToDoItem;
 using FancyToDo.Infrastructure.Configuration;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Options;
-using SharedKernel;
+using SharedKernel.EventSourcing.EventStore;
 
 namespace FancyToDo.API;
 

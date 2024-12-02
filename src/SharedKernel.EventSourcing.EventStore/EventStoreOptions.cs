@@ -1,4 +1,4 @@
-﻿namespace FancyToDo.Infrastructure.Configuration;
+﻿namespace SharedKernel.EventSourcing.EventStore;
 
 public class EventStoreOptions
 {

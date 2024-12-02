@@ -1,6 +1,4 @@
-﻿using SharedKernel;
-
-namespace FancyToDo.Core;
+﻿namespace SharedKernel.EventSourcing.Core;
 
 public interface IEventStore
 {

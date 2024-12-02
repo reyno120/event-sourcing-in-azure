@@ -1,14 +1,11 @@
 ﻿using System.Text.Json;
-using FancyToDo.Core;
-using FancyToDo.Infrastructure.Configuration;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Extensions.Options;
-using SharedKernel;
+using SharedKernel.EventSourcing.Core;
 
-namespace FancyToDo.Infrastructure;
+namespace SharedKernel.EventSourcing.EventStore;
 
-// TODO: Move this to SharedKernel w/ EventStoreOptions & EventStream?
 public class EventStore(CosmosClient cosmosClient, IOptions<EventStoreOptions> options)
     : IEventStore
 {

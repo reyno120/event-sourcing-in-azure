@@ -1,9 +1,8 @@
-﻿using FancyToDo.Infrastructure;
-using FancyToDo.Infrastructure.Configuration;
-using Microsoft.Azure.Cosmos;
+﻿using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Moq;
+using SharedKernel.EventSourcing.EventStore;
 
 namespace FancyToDo.IntegrationTests;
 
