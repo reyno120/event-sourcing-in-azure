@@ -1,20 +1,20 @@
 ﻿using Ardalis.ApiEndpoints;
 using FancyToDo.Core.ToDoList;
-using FancyToDo.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.EventSourcing.Core;
+using SharedKernel.EventSourcing.EventStore;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace FancyToDo.API.ToDoItemEndpoints;
 
 public record UpdateToDoItemRequest([FromRoute] Guid Id, [FromRoute] Guid TaskId, [FromBody] string Task, [FromBody] string Status);
 
-public class ToDoItemsUpdateEndpoint(IEventStore<ToDoListEventStore> eventStore) : EndpointBaseAsync
+public class ToDoItemsUpdateEndpoint(IEventStore<EventStore<ToDoList>> eventStore) : EndpointBaseAsync
     .WithRequest<UpdateToDoItemRequest>
     .WithResult<IActionResult>
 {
-    private readonly ToDoListEventStore _eventStore = eventStore.Store;
-
+    private readonly EventStore<ToDoList> _eventStore = eventStore.Store;
+    
     [HttpPut("/todolists/{id:Guid}/todoitems/{itemId:Guid}")]
     [SwaggerOperation(
         Summary = "Updates a ToDo Item",

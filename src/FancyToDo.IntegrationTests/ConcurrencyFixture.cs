@@ -1,4 +1,4 @@
-﻿using FancyToDo.Infrastructure;
+﻿using FancyToDo.Core.ToDoList;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using SharedKernel.EventSourcing.EventStore;
@@ -9,7 +9,7 @@ public class ConcurrencyFixture : IDisposable
 {
     private readonly EventStoreOptions _eventStoreOptions;
     private readonly CosmosClient _cosmosClient;
-    public readonly ToDoListEventStore EventStore;
+    public readonly EventStore<ToDoList> EventStore;
     public Container EventStoreContainer { get; private set; }
     
     public ConcurrencyFixture()
@@ -17,7 +17,7 @@ public class ConcurrencyFixture : IDisposable
         // Configure
         var config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
         _eventStoreOptions = new EventStoreOptions();
-        config.GetSection(nameof(ToDoListEventStore)).Bind(_eventStoreOptions);
+        config.GetSection("EventStores").GetSection("ToDoListEventStore").Bind(_eventStoreOptions);
 
         
         // Initialize CosmosDB Emulator
@@ -44,7 +44,7 @@ public class ConcurrencyFixture : IDisposable
         
         
         // Initialize EventStore
-        EventStore = new ToDoListEventStore(_cosmosClient, _eventStoreOptions);
+        EventStore = new EventStore<ToDoList>(_cosmosClient, _eventStoreOptions);
     }
 
     private async Task CreateContainer(Database db)

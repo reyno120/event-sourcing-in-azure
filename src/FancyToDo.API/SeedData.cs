@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
+using FancyToDo.Core.ToDoList;
 using FancyToDo.Core.ToDoList.DomainEvents;
 using FancyToDo.Core.ToDoList.Entities.ToDoItem;
-using FancyToDo.Infrastructure;
 using FancyToDo.Infrastructure.Configuration;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Options;
@@ -14,7 +14,7 @@ public static class SeedData
    public static async Task SeedTestData(this WebApplication app)
    {
       var eventStoreOptionsSnapshot = app.Services.GetRequiredService<IOptionsMonitor<EventStoreOptions>>();
-      var eventStoreOptions = eventStoreOptionsSnapshot.Get(nameof(ToDoListEventStore));
+      var eventStoreOptions = eventStoreOptionsSnapshot.Get($"{nameof(ToDoList)}EventStore");
       
       var projectionOptions = app.Services.GetRequiredService<IOptions<ProjectionOptions>>();
       

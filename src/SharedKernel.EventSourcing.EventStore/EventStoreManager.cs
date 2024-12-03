@@ -3,7 +3,7 @@
 namespace SharedKernel.EventSourcing.EventStore;
 
 internal sealed class EventStoreManager<TEventStore>(IEventStoreFactory<TEventStore> factory) 
-    : IEventStore<TEventStore> where TEventStore : class
+    : IEventStore<TEventStore> where TEventStore : class 
 {
     private volatile object? _syncObj;
     private volatile TEventStore? _store;

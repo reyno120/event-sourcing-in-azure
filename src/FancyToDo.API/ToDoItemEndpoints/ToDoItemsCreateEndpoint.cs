@@ -1,18 +1,19 @@
 ﻿using Ardalis.ApiEndpoints;
-using FancyToDo.Infrastructure;
+using FancyToDo.Core.ToDoList;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.EventSourcing.Core;
+using SharedKernel.EventSourcing.EventStore;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace FancyToDo.API.ToDoItemEndpoints;
 
 public record CreateToDoItemRequest(Guid ListId, string Task);
 
-public class ToDoItemsCreateEndpoint(IEventStore<ToDoListEventStore> eventStore) : EndpointBaseAsync
+public class ToDoItemsCreateEndpoint(IEventStore<EventStore<ToDoList>> eventStore) : EndpointBaseAsync
     .WithRequest<CreateToDoItemRequest>
     .WithResult<IActionResult>
 {
-    private readonly ToDoListEventStore _eventStore = eventStore.Store;
+    private readonly EventStore<ToDoList> _eventStore = eventStore.Store;
     
     [HttpPost(Resources.ToDoItemRoute)]
     [SwaggerOperation(

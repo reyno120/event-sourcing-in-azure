@@ -1,3 +1,4 @@
+using FancyToDo.Core.ToDoList;
 using FancyToDo.Infrastructure.Configuration;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Functions.Worker;
@@ -35,7 +36,7 @@ builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
 });
 
 
-builder.ConfigureEventStore(typeof(Program).Assembly);
+builder.ConfigureEventStore();
 builder.Services.Configure<ProjectionOptions>(builder.Configuration.GetSection(ProjectionOptions.Projection));
 
 

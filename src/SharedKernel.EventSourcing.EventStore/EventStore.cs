@@ -5,7 +5,7 @@ using SharedKernel.EventSourcing.Core;
 
 namespace SharedKernel.EventSourcing.EventStore;
 
-public abstract class EventStore<T>(CosmosClient cosmosClient, EventStoreOptions options)
+public class EventStore<T>(CosmosClient cosmosClient, EventStoreOptions options)
     where T : AggregateRoot
 {
     private readonly Container _container = cosmosClient

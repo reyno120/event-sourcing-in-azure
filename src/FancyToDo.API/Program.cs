@@ -13,7 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.ConfigureDataStore();
-builder.ConfigureEventStore(typeof(ToDoListEventStore).Assembly);
+builder.ConfigureEventStore();
 
 
 var app = builder.Build();
