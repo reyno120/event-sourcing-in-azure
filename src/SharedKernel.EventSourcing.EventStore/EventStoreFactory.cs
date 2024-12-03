@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 
 namespace SharedKernel.EventSourcing.EventStore;
 
-public class EventStoreFactory<TEventStore>(CosmosClient cosmosClient, 
+internal sealed class EventStoreFactory<TEventStore>(CosmosClient cosmosClient, 
     IOptionsMonitor<EventStoreOptions> namedOptionsAccessor)
     : IEventStoreFactory<TEventStore> where TEventStore : class 
 {
