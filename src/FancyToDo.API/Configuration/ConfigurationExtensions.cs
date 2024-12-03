@@ -1,7 +1,6 @@
 ﻿using FancyToDo.Infrastructure;
 using FancyToDo.Infrastructure.Configuration;
 using Microsoft.Azure.Cosmos;
-using SharedKernel.EventSourcing.EventStore;
 
 namespace FancyToDo.API.Configuration;
 
@@ -20,8 +19,6 @@ public static class ConfigurationExtensions
             };
          });
 
-      builder.ConfigureEventStore();
-      
       builder.Services.Configure<ProjectionOptions>(builder.Configuration.GetSection(ProjectionOptions.Projection));
       builder.Services.AddSingleton<ToDoListReadOnlyRepository>();
 

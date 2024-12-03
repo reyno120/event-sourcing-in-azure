@@ -1,5 +1,6 @@
 ﻿using Ardalis.ApiEndpoints;
 using FancyToDo.Core.ToDoList;
+using FancyToDo.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.EventSourcing.Core;
 using Swashbuckle.AspNetCore.Annotations;
@@ -8,11 +9,11 @@ namespace FancyToDo.API.ToDoItemEndpoints;
 
 public record UpdateToDoItemRequest([FromRoute] Guid Id, [FromRoute] Guid TaskId, [FromBody] string Task, [FromBody] string Status);
 
-public class ToDoItemsUpdateEndpoint(IEventStore eventStore) : EndpointBaseAsync
+public class ToDoItemsUpdateEndpoint(IEventStore<ToDoListEventStore> eventStore) : EndpointBaseAsync
     .WithRequest<UpdateToDoItemRequest>
     .WithResult<IActionResult>
 {
-    private readonly IEventStore _eventStore = eventStore;
+    private readonly ToDoListEventStore _eventStore = eventStore.Store;
 
     [HttpPut("/todolists/{id:Guid}/todoitems/{itemId:Guid}")]
     [SwaggerOperation(
@@ -23,7 +24,7 @@ public class ToDoItemsUpdateEndpoint(IEventStore eventStore) : EndpointBaseAsync
     ] 
     public override async Task<IActionResult> HandleAsync(UpdateToDoItemRequest request, CancellationToken token)
     {
-        var toDoList = await _eventStore.Load<ToDoList>(request.Id);
+        var toDoList = await _eventStore.Load(request.Id);
         if (toDoList is null)
             throw new InvalidOperationException("ToDoList does not exist.");
         

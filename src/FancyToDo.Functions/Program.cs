@@ -35,7 +35,7 @@ builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
 });
 
 
-builder.ConfigureEventStore();
+builder.ConfigureEventStore(typeof(Program).Assembly);
 builder.Services.Configure<ProjectionOptions>(builder.Configuration.GetSection(ProjectionOptions.Projection));
 
 

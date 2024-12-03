@@ -1,5 +1,7 @@
 using FancyToDo.API;
 using FancyToDo.API.Configuration;
+using FancyToDo.Infrastructure;
+using SharedKernel.EventSourcing.EventStore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +13,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.ConfigureDataStore();
+builder.ConfigureEventStore(typeof(ToDoListEventStore).Assembly);
+
 
 var app = builder.Build();
 

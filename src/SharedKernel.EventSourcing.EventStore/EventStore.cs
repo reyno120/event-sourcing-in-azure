@@ -1,19 +1,18 @@
 ﻿using System.Text.Json;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
-using Microsoft.Extensions.Options;
 using SharedKernel.EventSourcing.Core;
 
 namespace SharedKernel.EventSourcing.EventStore;
 
-public class EventStore(CosmosClient cosmosClient, IOptions<EventStoreOptions> options)
-    : IEventStore
+public abstract class EventStore<T>(CosmosClient cosmosClient, EventStoreOptions options)
+    where T : AggregateRoot
 {
     private readonly Container _container = cosmosClient
-        .GetContainer(options.Value.DatabaseName, options.Value.ContainerName);
+        .GetContainer(options.DatabaseName, options.ContainerName);
 
-    public async Task Append<T>(T aggregateRoot)
-        where T : AggregateRoot 
+
+    public async Task Append(T aggregateRoot)
     {
         var batch = _container.CreateTransactionalBatch(new PartitionKey(aggregateRoot.Id.ToString()));
 
@@ -41,8 +40,7 @@ public class EventStore(CosmosClient cosmosClient, IOptions<EventStoreOptions> o
         aggregateRoot.ClearDomainEvents();
     }
     
-    public async Task<T?> Load<T>(Guid id) 
-        where T : AggregateRoot 
+    public async Task<T?> Load(Guid id) 
     {
         var events = await LoadEvents(id);
         if (events.Count == 0) 

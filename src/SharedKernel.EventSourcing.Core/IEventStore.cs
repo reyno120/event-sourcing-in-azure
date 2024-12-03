@@ -1,7 +1,6 @@
 ﻿namespace SharedKernel.EventSourcing.Core;
 
-public interface IEventStore
+public interface IEventStore<T>
 {
-    Task Append<T>(T aggregate) where T : AggregateRoot;
-    Task<T?> Load<T>(Guid id) where T : AggregateRoot;
+    T Store { get; }
 }
