@@ -25,7 +25,7 @@ public static class ConfigureEventStoreExtensions
         {
             string section = $"EventStores:{eventStoreType.Name}";
             builder.Services.Configure<EventStoreOptions>(eventStoreType.Name,
-                builder.Configuration.GetSection(section));
+                builder.Configuration.GetSection(section)); // TODO: Throw exception if empty configuration is found
         }
         
         
