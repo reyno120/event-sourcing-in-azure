@@ -14,6 +14,11 @@ public static class ConfigureEventStoreExtensions
         builder.Services.AddSingleton(typeof(IEventStore<>), typeof(EventStoreManager<>));
         builder.Services.AddTransient(typeof(IEventStoreFactory<>), typeof(EventStoreFactory<>));
         
+
+        // TODO: Do we really need to scan assemblies for EventStores?
+        // Pull "EventStores" section from appsettings.json and iterate through
+        // registering their configurations. See v2 (implementation w/o concrete Event Stores)
+        // for example
         
         // Scan Assembly for Event Stores
         var eventStoreTypes = assembliesToScan
