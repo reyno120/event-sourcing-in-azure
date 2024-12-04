@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using Ardalis.GuardClauses;
+using FancyToDo.Core.ToDoList.DomainEvents;
 using FancyToDo.Core.ToDoList.Entities.ToDoItem.DomainEvents;
 using SharedKernel.EventSourcing.Core;
 
@@ -10,12 +11,11 @@ public class ToDoItem : Entity
     public string Task { get; private set; }
     public string Status { get; private set; } = "To Do";
     
-    [JsonConstructor]
-    private ToDoItem(Guid id, string task, string status)
+    internal ToDoItem(ItemAddedEvent e)
     {
-        this.Id = id;
-        this.Task = task;
-        this.Status = status;
+        this.Id = e.ItemId;
+        this.Task = e.Task;
+        this.Status = e.Status;
     }
 
     internal ToDoItem(string task)
