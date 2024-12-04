@@ -1,7 +1,5 @@
-using System.Text.Json;
 using FancyToDo.Core.ToDoList;
 using FancyToDo.Core.ToDoList.DomainEvents;
-using FancyToDo.Core.ToDoList.Entities.ToDoItem;
 using FancyToDo.Core.ToDoList.Entities.ToDoItem.DomainEvents;
 
 namespace FancyToDo.UnitTests;
@@ -49,8 +47,7 @@ public class ToDoListsTests
             {
                 Assert.IsType<ItemAddedEvent>(e);
                 
-                var item = JsonSerializer.Deserialize<ToDoItem>(((ItemAddedEvent)e).Item)!;
-                Assert.Equal("Task 1", item.Task);
+                Assert.Equal("Task 1", ((ItemAddedEvent)e).Task);
             },
             e =>
             {
@@ -60,8 +57,7 @@ public class ToDoListsTests
             {
                 Assert.IsType<ItemAddedEvent>(e);
                 
-                var item = JsonSerializer.Deserialize<ToDoItem>(((ItemAddedEvent)e).Item)!;
-                Assert.Equal("Task 2", item.Task);
+                Assert.Equal("Task 2", ((ItemAddedEvent)e).Task);
             });
     }
 }
