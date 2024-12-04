@@ -1,6 +1,5 @@
 using System.Text.Json;
 using FancyToDo.Core.ToDoList.DomainEvents;
-using FancyToDo.Core.ToDoList.Entities.ToDoItem;
 using Microsoft.Azure.Cosmos;
 using SharedKernel.EventSourcing.EventStore;
 
@@ -35,7 +34,8 @@ namespace FancyToDo.IntegrationTests.Tests
 				streamId: _toDoListId,
 				eventType: typeof(ItemAddedEvent),
 				version: 2,
-				payload: JsonSerializer.Serialize(new ItemAddedEvent(_toDoListId, new ToDoItem("Test Task")))
+				payload: JsonSerializer.Serialize(
+					new ItemAddedEvent(_toDoListId, Guid.NewGuid(), "Test Task 1", "To Do"))
 			);
 			await fixture.EventStoreContainer.CreateItemAsync(stream);	
 
@@ -71,7 +71,8 @@ namespace FancyToDo.IntegrationTests.Tests
 				streamId: _toDoListId,
 				eventType: typeof(ItemAddedEvent),
 				version: 2,
-				payload: JsonSerializer.Serialize(new ItemAddedEvent(_toDoListId, new ToDoItem("Test Task")))
+				payload: JsonSerializer.Serialize(
+					new ItemAddedEvent(_toDoListId, Guid.NewGuid(), "Test Task 1", "To Do"))
 			);
 			await fixture.EventStoreContainer.CreateItemAsync(stream);	
 

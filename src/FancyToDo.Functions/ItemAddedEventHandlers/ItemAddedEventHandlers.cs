@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics;
-using System.Text.Json;
 using FancyToDo.Core.ToDoList.DomainEvents;
-using FancyToDo.Core.ToDoList.Entities.ToDoItem;
 using FancyToDo.Infrastructure.Configuration;
 using FancyToDo.Projections;
 using MediatR;
@@ -18,12 +16,11 @@ public class UpdateProjection(CosmosClient cosmosClient, IOptions<ProjectionOpti
         var container = cosmosClient
             .GetContainer(options.Value.DatabaseName, options.Value.ContainerName);
 
-        var item = JsonSerializer.Deserialize<ToDoItem>(@event.Item)!;
         var itemView = new ToDoListItemView()
         {
-            Id = item.Id,
-            Task = item.Task,
-            Status = item.Status
+            Id = @event.ItemId,
+            Task = @event.Task,
+            Status = @event.Status
         };
 
         // TODO: Patch vs Replace??
