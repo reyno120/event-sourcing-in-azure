@@ -20,7 +20,7 @@ public abstract class AggregateRoot : Entity
     public new List<BaseDomainEvent> CollectDomainEvents()
     {
         return base.CollectDomainEvents()
-            .OrderBy(o => o.DateOccurred)
+            .OrderBy(o => o.DateTimeOccurredUtc)
             .ToList();
     }
 }
