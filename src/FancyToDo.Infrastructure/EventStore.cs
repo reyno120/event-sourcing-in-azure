@@ -8,7 +8,6 @@ using SharedKernel;
 
 namespace FancyToDo.Infrastructure;
 
-// TODO: Move this to SharedKernel w/ EventStoreOptions & EventStream?
 public class EventStore(CosmosClient cosmosClient, IOptions<EventStoreOptions> options)
     : IEventStore
 {
@@ -26,7 +25,6 @@ public class EventStore(CosmosClient cosmosClient, IOptions<EventStoreOptions> o
             EventStream stream = new
             (
                 streamId: aggregateRoot.Id,
-                timeStamp: domainEvent.DateOccurred,    //TODO: This is being serialized in the payload
                 eventType: domainEvent.GetType(),
                 version: ++version, 
                 payload: JsonSerializer.Serialize(domainEvent, domainEvent.GetType())
