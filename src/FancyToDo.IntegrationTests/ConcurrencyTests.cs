@@ -21,7 +21,6 @@ namespace FancyToDo.IntegrationTests.Tests
 			EventStream stream = new
 			(
 				streamId: _toDoListId,
-				timeStamp: DateTimeOffset.UtcNow,
 				eventType: typeof(ToDoListCreatedEvent),
 				version: 1,
 				payload: JsonSerializer.Serialize(new ToDoListCreatedEvent(_toDoListId, "Fancy ToDo List"))
@@ -35,7 +34,6 @@ namespace FancyToDo.IntegrationTests.Tests
 			
 			stream = new EventStream(
 				streamId: _toDoListId,
-				timeStamp: DateTimeOffset.UtcNow,
 				eventType: typeof(ItemAddedEvent),
 				version: 2,
 				payload: JsonSerializer.Serialize(new ItemAddedEvent(_toDoListId, new ToDoItem("Test Task")))
@@ -59,7 +57,6 @@ namespace FancyToDo.IntegrationTests.Tests
 			EventStream stream = new
 			(
 				streamId: _toDoListId,
-				timeStamp: DateTimeOffset.UtcNow,
 				eventType: typeof(ToDoListCreatedEvent),
 				version: 1,
 				payload: JsonSerializer.Serialize(new ToDoListCreatedEvent(_toDoListId, "Fancy ToDo List"))
@@ -73,7 +70,6 @@ namespace FancyToDo.IntegrationTests.Tests
 			
 			stream = new EventStream(
 				streamId: _toDoListId,
-				timeStamp: DateTimeOffset.UtcNow,
 				eventType: typeof(ItemAddedEvent),
 				version: 2,
 				payload: JsonSerializer.Serialize(new ItemAddedEvent(_toDoListId, new ToDoItem("Test Task")))

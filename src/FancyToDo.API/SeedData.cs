@@ -34,7 +34,6 @@ public static class SeedData
       EventStream stream = new
       (
          streamId: toDoListId,
-         timeStamp: DateTimeOffset.UtcNow,
          eventType: typeof(ToDoListCreatedEvent),
          version: 1,
          payload: JsonSerializer.Serialize(new ToDoListCreatedEvent(toDoListId, "Fancy ToDo List"))
