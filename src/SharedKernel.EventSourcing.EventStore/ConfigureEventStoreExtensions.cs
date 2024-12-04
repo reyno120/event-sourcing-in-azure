@@ -11,6 +11,9 @@ public static class ConfigureEventStoreExtensions
     public static IHostApplicationBuilder ConfigureEventStore(this IHostApplicationBuilder builder, 
         params Assembly[] assembliesToScan)
     {
+        // TODO: Make this an Azure CosmosDB specific extension and verify
+        // container from config is setup correctly with correct paritionId & uniquekey?
+        
         builder.Services.AddSingleton(typeof(IEventStore<>), typeof(EventStoreManager<>));
         builder.Services.AddTransient(typeof(IEventStoreFactory<>), typeof(EventStoreFactory<>));
         
