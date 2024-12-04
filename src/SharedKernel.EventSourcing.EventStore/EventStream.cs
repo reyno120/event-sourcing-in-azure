@@ -3,11 +3,12 @@ using System.Text.Json.Serialization;
 
 namespace SharedKernel.EventSourcing.EventStore;
 
-public class EventStream(DateTimeOffset timeStamp, Guid streamId, Type eventType, int version, string payload)
+public class EventStream(Guid streamId, Type eventType, int version, string payload)
 {
     public Guid Id { get; private set; } =  Guid.NewGuid(); 
     
-    public DateTimeOffset TimeStamp { get; init; } = timeStamp;
+    // TODO: Create a LocalizedTimeStamp field?
+    // public DateTimeOffset TimeStamp { get; init; } = timeStamp;
     
     public Guid StreamId { get; init; } = streamId; // AggregateId & Our Partition Key
     
