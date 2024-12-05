@@ -20,6 +20,8 @@ public static class ConfigurationExtensions
             };
          });
 
+
+      // TODO: Should EventStore & Repository be Scoped or Singleton?
       builder.Services.Configure<EventStoreOptions>(builder.Configuration.GetSection(EventStoreOptions.EventStore));
       builder.Services.AddSingleton<IEventStore, EventStore>();
       
