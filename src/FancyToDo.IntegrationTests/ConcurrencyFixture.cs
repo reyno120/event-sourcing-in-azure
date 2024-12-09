@@ -50,7 +50,7 @@ public class ConcurrencyFixture : IDisposable
         // Switch to ITestOutputHelper using a factory
         var mockLogger = new Mock<ILogger<EventStore<ToDoList>>>();
         // mockLogger.Setup(s => s.LogDebug(It.isAN));
-        EventStore = new ToDoListEventStore(_cosmosClient, _eventStoreOptions, mockLogger.Object);
+        EventStore = new EventStore<ToDoList>(_cosmosClient, _eventStoreOptions, mockLogger.Object);
     }
 
     private async Task CreateContainer(Database db)
