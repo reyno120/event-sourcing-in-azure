@@ -1,5 +1,6 @@
 using FancyToDo.API;
 using FancyToDo.API.Configuration;
+using FancyToDo.API.Middleware;
 using FancyToDo.Infrastructure;
 using SharedKernel.EventSourcing.EventStore;
 
@@ -17,6 +18,8 @@ builder.ConfigureEventStore();
 
 
 var app = builder.Build();
+
+app.UseLoggingMiddleware();
 
 await app.SeedTestData();
 

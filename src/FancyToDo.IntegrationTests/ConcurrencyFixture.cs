@@ -1,6 +1,9 @@
 ﻿using FancyToDo.Core.ToDoList;
+using FancyToDo.Infrastructure;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Moq;
 using SharedKernel.EventSourcing.EventStore;
 
 namespace FancyToDo.IntegrationTests;
@@ -44,7 +47,10 @@ public class ConcurrencyFixture : IDisposable
         
         
         // Initialize EventStore
-        EventStore = new EventStore<ToDoList>(_cosmosClient, _eventStoreOptions);
+        // Switch to ITestOutputHelper using a factory
+        var mockLogger = new Mock<ILogger<EventStore<ToDoList>>>();
+        // mockLogger.Setup(s => s.LogDebug(It.isAN));
+        EventStore = new ToDoListEventStore(_cosmosClient, _eventStoreOptions, mockLogger.Object);
     }
 
     private async Task CreateContainer(Database db)
