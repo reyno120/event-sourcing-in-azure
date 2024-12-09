@@ -1,18 +1,22 @@
-﻿using System.Diagnostics;
-using FancyToDo.Core.ToDoList.DomainEvents;
+﻿using FancyToDo.Core.ToDoList.DomainEvents;
 using FancyToDo.Infrastructure.Configuration;
 using FancyToDo.Projections;
 using MediatR;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace FancyToDo.Functions.ItemAddedEventHandlers;
 
-public class UpdateProjection(CosmosClient cosmosClient, IOptions<ProjectionOptions> options) 
+internal sealed class UpdateProjection(CosmosClient cosmosClient, 
+    IOptions<ProjectionOptions> options, ILogger<ItemAddedEvent> logger) 
     : INotificationHandler<ItemAddedEvent>
 {
     public async Task Handle(ItemAddedEvent @event, CancellationToken cancellationToken)
     {
+        // TODO: Move to Decorator?
+        logger.LogInformation("Updating Projection for ItemAddedEvent");
+        
         var container = cosmosClient
             .GetContainer(options.Value.DatabaseName, options.Value.ContainerName);
 
@@ -34,10 +38,11 @@ public class UpdateProjection(CosmosClient cosmosClient, IOptions<ProjectionOpti
     }
 }
 
-public class PublishEvent : INotificationHandler<ItemAddedEvent>
+internal sealed class PublishEvent(ILogger<ItemAddedEvent> logger) : INotificationHandler<ItemAddedEvent>
 {
+    // TODO: Move to Decorator?
     public async Task Handle(ItemAddedEvent @event, CancellationToken cancellationToken)
     {
-        Debug.WriteLine("Publish Event");
+        logger.LogInformation("Publishing ItemAddedEvent");
     }
 }

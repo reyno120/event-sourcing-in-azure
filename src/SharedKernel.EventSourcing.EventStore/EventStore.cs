@@ -1,23 +1,35 @@
 ﻿using System.Text.Json;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
+using Microsoft.Extensions.Logging;
 using SharedKernel.EventSourcing.Core;
 
 namespace SharedKernel.EventSourcing.EventStore;
 
-public abstract class EventStore<T>(CosmosClient cosmosClient, EventStoreOptions options)
+// Logging for Library Authors
+// https://learn.microsoft.com/en-us/dotnet/core/extensions/logging-library-authors
+
+public abstract partial class EventStore<T>(CosmosClient cosmosClient, 
+    EventStoreOptions options, ILogger logger)
     where T : AggregateRoot
 {
     private readonly Container _container = cosmosClient
         .GetContainer(options.DatabaseName, options.ContainerName);
+    
 
 
     public async Task Append(T aggregateRoot)
     {
+        var domainEvents = aggregateRoot.CollectDomainEvents();
+        // TODO: https://learn.microsoft.com/en-us/dotnet/core/extensions/high-performance-logging
+        // Use action delegate so JsonSerializer.Serialize & typeof(T) isn't called when the LogLevel isn't set to Debug
+        LogAppendRequest(logger, typeof(T).Name, aggregateRoot.Id, 
+            domainEvents.Select(s => JsonSerializer.Serialize(s, s.GetType())));
+        
         var batch = _container.CreateTransactionalBatch(new PartitionKey(aggregateRoot.Id.ToString()));
 
         var version = aggregateRoot.Version;
-        foreach (var domainEvent in aggregateRoot.CollectDomainEvents())
+        foreach (var domainEvent in domainEvents)
         {
             EventStream stream = new
             (
@@ -29,19 +41,42 @@ public abstract class EventStore<T>(CosmosClient cosmosClient, EventStoreOptions
 
             batch.CreateItem(stream);
         }
-
+        
+        
         // TODO: Best way to throw/handle exception?
         using TransactionalBatchResponse response = await batch.ExecuteAsync();
         if (!response.IsSuccessStatusCode)
-            throw new CosmosException(response.ErrorMessage, response.StatusCode, 0, response.ActivityId, response.RequestCharge);
+        {
+            // TODO: CorrelationId??
+            LogAppendError(logger, typeof(T).Name, aggregateRoot.Id,
+                domainEvents.Select(s => JsonSerializer.Serialize(s, s.GetType()))); 
+            throw new CosmosException(response.ErrorMessage, 
+                response.StatusCode, 0, response.ActivityId, response.RequestCharge);
+        }
         
+        // TODO: Debug Log for successfully appended events - read from transactionresult stream
         
         aggregateRoot.ClearDomainEvents();
     }
     
+    [LoggerMessage(Level = LogLevel.Debug, 
+        Message = "Appending the following {type} events with Id: {id} \n {@events}")]
+    partial void LogAppendRequest(ILogger logger, string type, Guid id, IEnumerable<string> @events);
+    
+    [LoggerMessage(
+        Level = LogLevel.Error, 
+        Message = "Error appending the following {type} events with Id: {id} \n {@events}")]
+    partial void LogAppendError(ILogger logger, string type, Guid id, IEnumerable<string> @events);
+    
+    
+    
     public async Task<T?> Load(Guid id) 
     {
+        LogLoadRequest(logger, typeof(T).Name, id);
+        
         var events = await LoadEvents(id);
+        LogLoadedEvents(logger, typeof(T).Name, id, JsonSerializer.Serialize(events));
+        
         if (events.Count == 0) 
             return default;     // TODO: Throw exception instead of return default 
 
@@ -50,6 +85,14 @@ public abstract class EventStore<T>(CosmosClient cosmosClient, EventStoreOptions
                 .Select(s => (BaseDomainEvent)s.Deserialize())
             )!;
     }
+    
+    [LoggerMessage(Level = LogLevel.Debug, 
+        Message = "Loading events for {type} with Id: {id}")]
+    partial void LogLoadRequest(ILogger logger, string type, Guid id);
+    
+    [LoggerMessage(Level = LogLevel.Debug, 
+        Message = "Found {type} events with Id: {id} \n {@events}")]
+    partial void LogLoadedEvents(ILogger logger, string type, Guid id, string @events);
 
     private async Task<List<EventStream>> LoadEvents(Guid id)
     {
