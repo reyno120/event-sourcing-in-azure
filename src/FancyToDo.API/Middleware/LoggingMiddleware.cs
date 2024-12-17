@@ -9,7 +9,8 @@ internal sealed partial class LoggingMiddleware(RequestDelegate next, ILogger<Lo
     {
         // TODO: Can I suppress nulls here?
         // TODO: How will username work with a Blazor frontend?
-        var endpoint = httpContext.GetEndpoint()!.DisplayName!;
+        // TODO: Middleware gets called no matter what. - Look at W3C logging
+        var endpoint = httpContext.GetEndpoint()?.DisplayName!;
         var username = httpContext.User.Identity!.Name; // Probably not here
         
         // TODO: Add body to log message?

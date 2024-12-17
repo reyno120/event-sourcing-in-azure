@@ -13,6 +13,7 @@ public static class ConfigureEventStoreExtensions
     {
         // TODO: Make this an Azure CosmosDB specific extension and verify
         // container from config is setup correctly with correct paritionId & uniquekey?
+        // Or do this via health check extension?
 
         // TODO: Should this be scoped instead of singleton?
         builder.Services.AddSingleton(typeof(IEventStore<>), typeof(EventStoreManager<>));

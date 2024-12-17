@@ -5,6 +5,7 @@ using FancyToDo.Infrastructure;
 using SharedKernel.EventSourcing.EventStore;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddServiceDefaults();
 
 // Add services to the container.
 
@@ -18,6 +19,7 @@ builder.ConfigureEventStore(typeof(ToDoListEventStore).Assembly);
 
 
 var app = builder.Build();
+app.MapDefaultEndpoints();
 
 app.UseLoggingMiddleware();
 
