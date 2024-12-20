@@ -13,6 +13,12 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+- task: Bash@3
+  displayName: Install .NET Aspire workload
+  inputs:
+    targetType: 'inline'
+    script: dotnet workload install aspire
+
 - script: ls -la
   displayName: "list files"
   workingDirectory: 'src'
