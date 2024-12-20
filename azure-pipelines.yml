@@ -7,7 +7,8 @@ trigger:
 - automated-testing
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: windows-2019
+  # What will we be using?
 
 variables:
   buildConfiguration: 'Release'
