@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.EventSourcing.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppHost.ServiceDefaults", "AppHost.ServiceDefaults\AppHost.ServiceDefaults.csproj", "{38009083-8B07-46FD-ACE6-3EA67ED8B768}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FancyToDo.FunctionalTests", "FancyToDo.FunctionalTests\FancyToDo.FunctionalTests.csproj", "{1FD61D99-3DFC-4855-BCB0-9AC2C6668C9A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{38009083-8B07-46FD-ACE6-3EA67ED8B768}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38009083-8B07-46FD-ACE6-3EA67ED8B768}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38009083-8B07-46FD-ACE6-3EA67ED8B768}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FD61D99-3DFC-4855-BCB0-9AC2C6668C9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FD61D99-3DFC-4855-BCB0-9AC2C6668C9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FD61D99-3DFC-4855-BCB0-9AC2C6668C9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FD61D99-3DFC-4855-BCB0-9AC2C6668C9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

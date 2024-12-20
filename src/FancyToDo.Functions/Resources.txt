@@ -1,0 +1,20 @@
+Writing Tests for Azure Functions Video:
+https://www.youtube.com/watch?v=oPV0-624qQc
+
+Azure Functions Repo:
+https://github.com/Azure/azure-functions-host/tree/dev/test/WebJobs.Script.Tests.Integration
+
+Integration Testing in ASP.NET Core:
+https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-9.0
+
+TestContainers:
+https://testcontainers.com/guides/getting-started-with-testcontainers-for-dotnet/
+
+Aspire Integration Testing:
+https://learn.microsoft.com/en-us/dotnet/aspire/testing/write-your-first-test?pivots=xunit
+
+xUnit/Fxitures:
+https://xunit.net/docs/shared-context
+
+Azure Functions Integration Testing by Running Host
+https://microsoft.github.io/AzureTipsAndTricks/blog/tip196.html

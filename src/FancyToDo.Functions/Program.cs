@@ -48,3 +48,7 @@ var host = builder.Build();
 
 await host.RunAsync();
 
+namespace  FancyToDo.Functions
+{
+    public partial class Program { }
+}
