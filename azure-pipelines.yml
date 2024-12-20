@@ -10,6 +10,7 @@ pool:
   vmImage: windows-2019
   # What will we be using?
 
+
 variables:
   buildConfiguration: 'Release'
 
@@ -70,6 +71,12 @@ steps:
   inputs:
     command: 'test'
     workingDirectory: 'src/FancyToDo.IntegrationTests'
+
+- task: FileTransform@2
+  inputs:
+    folderPath: 'src/FancyToDo.FunctionalTests'
+    enableXmlTransform: false
+    jsonTargetFiles: '''appsettings.json'''
 
 - task: DotNetCoreCLI@2
   displayName: "Run Functional Tests"
