@@ -38,9 +38,13 @@ steps:
 #     backendAzureRmKey: 'terraform.tfstate'
 
 - task: CmdLine@2
-  displayName: "Terraform init"
+  displayName: 'Terraform init'
   inputs:
-    script: 'cd ..| ls -la | cd terraform | terraform init' 
+    script: |
+      cd ..
+      ls -la
+      cd terraform
+      terraform init
 
 # - task: TerraformTaskV4@4
 #   displayName: Terraform init
