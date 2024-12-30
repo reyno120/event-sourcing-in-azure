@@ -10,9 +10,12 @@ trigger:
 
 pool: Jacob's Pool
 
-
 variables:
-  buildConfiguration: 'Release'
+- group: Build-Test
+
+
+# variables:
+#   buildConfiguration: 'Release'
 
 steps:
 - script: ls -la
