@@ -40,7 +40,7 @@ steps:
 - task: CmdLine@2
   displayName: "Terraform init"
   inputs:
-    script: 'cd ../terraform | ls -la | terraform init' 
+    script: 'cd ..| ls -la | cd terraform | terraform init' 
 
 # - task: TerraformTaskV4@4
 #   displayName: Terraform init
