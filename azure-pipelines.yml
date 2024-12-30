@@ -111,9 +111,25 @@ steps:
 #     workingDirectory: 'src/FancyToDo.IntegrationTests'
 
 - task: FileTransform@2
-  displayName: Replace values in appsettings.json
+  displayName: Replace values Functional Tests
   inputs:
-    folderPath: 'src'
+    folderPath: 'src/FancyToDo.FunctionalTests'
+    enableXmlTransform: false
+    xmlTransformationRules: 
+    jsonTargetFiles: 'appsettings.json'
+
+- task: FileTransform@2
+  displayName: Replace values in API
+  inputs:
+    folderPath: 'src/FancyToDo.API'
+    enableXmlTransform: false
+    xmlTransformationRules: 
+    jsonTargetFiles: 'appsettings.json'
+  
+- task: FileTransform@2
+  displayName: Replace values in Function App
+  inputs:
+    folderPath: 'src/FancyToDo.Functions'
     enableXmlTransform: false
     xmlTransformationRules: 
     jsonTargetFiles: 'appsettings.json'
