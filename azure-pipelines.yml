@@ -71,14 +71,19 @@ steps:
     command: 'validate'
     workingDirectory: terraform
     
-- task: TerraformTaskV4@4
-  displayName: Terraform Apply
+# - task: TerraformTaskV4@4
+#   displayName: Terraform Apply
+#   inputs:
+#     provider: 'azurerm'
+#     command: 'custom'
+#     outputTo: 'console'
+#     customCommand: 'apply -target module.database'
+#     environmentServiceNameAzureRM: 'azrm'
+#     workingDirectory: terraform
+- task: CmdLine@2
+  displayName: "Terraform Apply"
   inputs:
-    provider: 'azurerm'
-    command: 'custom'
-    outputTo: 'console'
-    customCommand: 'apply -target module.database'
-    environmentServiceNameAzureRM: 'azrm'
+    script: 'terraform apply -target module.database -auto-approve'
     workingDirectory: terraform
 
 - task: Bash@3
