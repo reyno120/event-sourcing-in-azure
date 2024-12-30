@@ -16,18 +16,21 @@ variables:
 
 steps:
 - task: TerraformInstaller@1
+  displayName: Install Terraform
   inputs:
     terraformVersion: 'latest'
 
 - task: TerraformTaskV4@4
+  displayName: Switch to Testing Workspace
   inputs:
     provider: 'azurerm'
     command: 'custom'
     outputTo: 'console'
-    customCommand: 'terraform workspace select testing'
+    customCommand: 'workspace testing'
     environmentServiceNameAzureRM: 'azrm'
 
 - task: TerraformTaskV4@4
+  displayName: Terraform init
   inputs:
     provider: 'azurerm'
     command: 'init'
@@ -38,11 +41,13 @@ steps:
     backendAzureRmKey: 'terraform.tfstate'
 
 - task: TerraformTaskV4@4
+  displayName: Terraform Validate
   inputs:
     provider: 'azurerm'
     command: 'validate'
     
 - task: TerraformTaskV4@4
+  displayName: Terraform Apply
   inputs:
     provider: 'azurerm'
     command: 'apply'
