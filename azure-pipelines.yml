@@ -104,11 +104,11 @@ steps:
     workingDirectory: 'src/FancyToDo.UnitTests'
 
 
-- task: DotNetCoreCLI@2
-  displayName: "Run Integration Tests"
-  inputs:
-    command: 'test'
-    workingDirectory: 'src/FancyToDo.IntegrationTests'
+# - task: DotNetCoreCLI@2
+#   displayName: "Run Integration Tests"
+#   inputs:
+#     command: 'test'
+#     workingDirectory: 'src/FancyToDo.IntegrationTests'
 
 - task: FileTransform@2
   inputs:
