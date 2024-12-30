@@ -1,4 +1,4 @@
-# ASP.NET Core
+# ASP.NET Core\
 # Build and test ASP.NET Core projects targeting .NET Core.
 # Add steps that run tests, create a NuGet package, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
@@ -15,6 +15,39 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+- task: TerraformInstaller@1
+  inputs:
+    terraformVersion: 'latest'
+
+- task: TerraformTaskV4@4
+  inputs:
+    provider: 'azurerm'
+    command: 'custom'
+    outputTo: 'console'
+    customCommand: 'workspace select testing'
+    environmentServiceNameAzureRM: 'azrm'
+
+- task: TerraformTaskV4@4
+  inputs:
+    provider: 'azurerm'
+    command: 'init'
+    backendAzureRmUseEnvironmentVariablesForAuthentication: false
+    backendServiceArm: 'azrm'
+    backendAzureRmResourceGroupName: 'automated-testing'
+    backendAzureRmStorageAccountName: 'jmreynolds03storage'
+    backendAzureRmContainerName: 'terraform-state'
+
+- task: TerraformTaskV4@4
+  inputs:
+    provider: 'azurerm'
+    command: 'validate'
+    
+- task: TerraformTaskV4@4
+  inputs:
+    provider: 'azurerm'
+    command: 'apply'
+    environmentServiceNameAzureRM: 'azrm'
+
 - task: Bash@3
   displayName: Install .NET Aspire workload
   inputs:
