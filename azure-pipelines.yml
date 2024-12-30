@@ -77,8 +77,7 @@ steps:
     provider: 'azurerm'
     command: 'custom'
     outputTo: 'console'
-    commandOptions: --auto-approve
-    customCommand: 'apply -target module.database'
+    customCommand: 'apply -target module.database -auto-approve'
     environmentServiceNameAzureRM: 'azrm'
     workingDirectory: terraform
 
