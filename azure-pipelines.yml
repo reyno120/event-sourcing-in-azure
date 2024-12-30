@@ -20,11 +20,6 @@ steps:
   inputs:
     terraformVersion: 'latest'
 
-- task: CmdLine@2
-  displayName: "Switch to testing Workspace"
-  inputs:
-    script: 'terraform workspace select testing'
-
 # - task: TerraformTaskV4@4
 #   displayName: Switch to Testing Workspace
 #   inputs:
@@ -48,6 +43,11 @@ steps:
     backendAzureRmStorageAccountName: 'jmreynolds03storage'
     backendAzureRmContainerName: 'terraform-state'
     backendAzureRmKey: 'terraform.tfstate'
+
+- task: CmdLine@2
+  displayName: "Switch to testing Workspace"
+  inputs:
+    script: 'terraform workspace select testing'
 
 - task: TerraformTaskV4@4
   displayName: Terraform Validate
