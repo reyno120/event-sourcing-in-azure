@@ -26,7 +26,7 @@ steps:
     provider: 'azurerm'
     command: 'custom'
     outputTo: 'console'
-    customCommand: 'workspace testing'
+    customCommand: 'workspace select testing'
     environmentServiceNameAzureRM: 'azrm'
 
 - task: TerraformTaskV4@4
@@ -50,8 +50,10 @@ steps:
   displayName: Terraform Apply
   inputs:
     provider: 'azurerm'
-    command: 'apply'
+    command: 'custom'
+    outputTo: 'console'
     commandOptions: --auto-approve
+    customCommand: 'apply -target module.database'
     environmentServiceNameAzureRM: 'azrm'
 
 - task: Bash@3
