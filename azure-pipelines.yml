@@ -46,6 +46,7 @@ steps:
   inputs:
     provider: 'azurerm'
     command: 'apply'
+    commandOptions: --auto-approve
     environmentServiceNameAzureRM: 'azrm'
 
 - task: Bash@3
