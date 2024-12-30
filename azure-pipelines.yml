@@ -31,11 +31,11 @@ steps:
   inputs:
     provider: 'azurerm'
     command: 'init'
-    backendAzureRmUseEnvironmentVariablesForAuthentication: false
     backendServiceArm: 'azrm'
     backendAzureRmResourceGroupName: 'automated-testing'
     backendAzureRmStorageAccountName: 'jmreynolds03storage'
     backendAzureRmContainerName: 'terraform-state'
+    backendAzureRmKey: 'terraform.tfstate'
 
 - task: TerraformTaskV4@4
   inputs:
