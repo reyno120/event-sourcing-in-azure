@@ -28,6 +28,10 @@ steps:
     outputTo: 'console'
     customCommand: 'workspace select testing'
     environmentServiceNameAzureRM: 'azrm'
+    backendAzureRmResourceGroupName: 'automated-testing'
+    backendAzureRmStorageAccountName: 'jmreynolds03storage'
+    backendAzureRmContainerName: 'terraform-state'
+    backendAzureRmKey: 'terraform.tfstate'
 
 - task: TerraformTaskV4@4
   displayName: Terraform init
