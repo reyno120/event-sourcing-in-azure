@@ -20,18 +20,23 @@ steps:
   inputs:
     terraformVersion: 'latest'
 
-- task: TerraformTaskV4@4
-  displayName: Switch to Testing Workspace
+- task: CmdLine@2
+  displayName: "Switch to testing Workspace"
   inputs:
-    provider: 'azurerm'
-    command: 'custom'
-    outputTo: 'console'
-    customCommand: 'workspace select testing'
-    environmentServiceNameAzureRM: 'azrm'
-    backendAzureRmResourceGroupName: 'automated-testing'
-    backendAzureRmStorageAccountName: 'jmreynolds03storage'
-    backendAzureRmContainerName: 'terraform-state'
-    backendAzureRmKey: 'terraform.tfstate'
+    script: 'terraform workspace select testing'
+
+# - task: TerraformTaskV4@4
+#   displayName: Switch to Testing Workspace
+#   inputs:
+#     provider: 'azurerm'
+#     command: 'custom'
+#     outputTo: 'console'
+#     customCommand: 'workspace select testing'
+#     environmentServiceNameAzureRM: 'azrm'
+#     backendAzureRmResourceGroupName: 'automated-testing'
+#     backendAzureRmStorageAccountName: 'jmreynolds03storage'
+#     backendAzureRmContainerName: 'terraform-state'
+#     backendAzureRmKey: 'terraform.tfstate'
 
 - task: TerraformTaskV4@4
   displayName: Terraform init
