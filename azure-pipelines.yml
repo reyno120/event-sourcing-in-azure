@@ -3,50 +3,88 @@
 # Add steps that run tests, create a NuGet package, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
+
+
 trigger:
 - automated-testing
 
-pool:
-  vmImage: ubuntu-latest
-  # What will we be using?
+pool: Jacob's Pool
 
 
 variables:
   buildConfiguration: 'Release'
 
 steps:
+- script: ls -la
+  displayName: "list files"
+  workingDirectory: 'src'
+  
 - task: TerraformInstaller@1
+  displayName: Install Terraform
   inputs:
     terraformVersion: 'latest'
 
-- task: TerraformTaskV4@4
-  inputs:
-    provider: 'azurerm'
-    command: 'custom'
-    outputTo: 'console'
-    customCommand: 'workspace select testing'
-    environmentServiceNameAzureRM: 'azrm'
+# - task: TerraformTaskV4@4
+#   displayName: Switch to Testing Workspace
+#   inputs:
+#     provider: 'azurerm'
+#     command: 'custom'
+#     outputTo: 'console'
+#     customCommand: 'workspace select testing'
+#     environmentServiceNameAzureRM: 'azrm'
+#     backendAzureRmResourceGroupName: 'automated-testing'
+#     backendAzureRmStorageAccountName: 'jmreynolds03storage'
+#     backendAzureRmContainerName: 'terraform-state'
+#     backendAzureRmKey: 'terraform.tfstate'
+
+# - task: CmdLine@2
+#   displayName: 'Terraform init'
+#   inputs:
+#     script: |
+#       cd .
+#       # ls -la
+#       cd terraform
+#       # terraform init
 
 - task: TerraformTaskV4@4
+  displayName: Terraform init
   inputs:
     provider: 'azurerm'
     command: 'init'
-    backendAzureRmUseEnvironmentVariablesForAuthentication: false
     backendServiceArm: 'azrm'
     backendAzureRmResourceGroupName: 'automated-testing'
     backendAzureRmStorageAccountName: 'jmreynolds03storage'
     backendAzureRmContainerName: 'terraform-state'
+    backendAzureRmKey: 'terraform.tfstate'
+    workingDirectory: terraform
+
+- task: CmdLine@2
+  displayName: "Switch to testing Workspace"
+  inputs:
+    script: 'terraform workspace select testing'
+    workingDirectory: terraform
 
 - task: TerraformTaskV4@4
+  displayName: Terraform Validate
   inputs:
     provider: 'azurerm'
     command: 'validate'
+    workingDirectory: terraform
     
-- task: TerraformTaskV4@4
+# - task: TerraformTaskV4@4
+#   displayName: Terraform Apply
+#   inputs:
+#     provider: 'azurerm'
+#     command: 'custom'
+#     outputTo: 'console'
+#     customCommand: 'apply -target module.database'
+#     environmentServiceNameAzureRM: 'azrm'
+#     workingDirectory: terraform
+- task: CmdLine@2
+  displayName: "Terraform Apply"
   inputs:
-    provider: 'azurerm'
-    command: 'apply'
-    environmentServiceNameAzureRM: 'azrm'
+    script: 'terraform apply -target module.database -var="database_name=test-db" -auto-approve'
+    workingDirectory: terraform
 
 - task: Bash@3
   displayName: Install .NET Aspire workload
@@ -54,9 +92,6 @@ steps:
     targetType: 'inline'
     script: dotnet workload install aspire
 
-- script: ls -la
-  displayName: "list files"
-  workingDirectory: 'src'
 
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
