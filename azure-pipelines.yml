@@ -83,7 +83,7 @@ steps:
 - task: CmdLine@2
   displayName: "Terraform Apply"
   inputs:
-    script: 'terraform apply -target module.database -var="database_name=test-db" -auto-approve'
+    script: 'terraform apply -target module.database -var="database_name=test-db" -var="client_secret=$(client_secret)" -auto-approve'
     workingDirectory: terraform
 
 - task: Bash@3
