@@ -1,10 +1,16 @@
 using System.Diagnostics;
-using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using FancyToDo.API.ToDoItemEndpoints;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Logging;
+using FancyToDo.Core.ToDoList.DomainEvents;
+using FancyToDo.Core.ToDoList.Entities.ToDoItem;
+using FancyToDo.Infrastructure;
+using FancyToDo.Projections;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Linq;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using SharedKernel.EventSourcing.EventStore;
 
 namespace FancyToDo.FunctionalTests;
 
@@ -12,23 +18,97 @@ namespace FancyToDo.FunctionalTests;
 
 public class ToDoListTests : IDisposable
 {
-    // Instructions:
-    // 1. Add a project reference to the target AppHost project, e.g.:
-    //
-    //    <ItemGroup>
-    //        <ProjectReference Include="../MyAspireApp.AppHost/MyAspireApp.AppHost.csproj" />
-    //    </ItemGroup>
-    //
-    // 2. Uncomment the following example test and update 'Projects.MyAspireApp_AppHost' to match your AppHost project:
-
     private Process _process;
+    private CosmosClient _cosmosClient;
+    private IConfiguration _configuration;
+    private EventStoreOptions _eventStoreOptions;
     
     [Fact]
     public async Task CreateToDoListItem()
     {
+        _configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+        _eventStoreOptions = new EventStoreOptions();
+        _configuration.GetSection("EventStores:ToDoListEventStore")
+            .Bind(_eventStoreOptions); 
         
-        // Arrange
-        var appHost = await DistributedApplicationTestingBuilder.CreateAsync<Projects.FancyToDo_API>();
+        await InitializeDatabase();
+        
+        StartAzureFunction();
+
+        await MakeAPICall();
+        
+        await ValidateProjectionUpdated();
+    }
+
+    private async Task InitializeDatabase()
+    {
+        var clientOptions = new CosmosClientOptions()
+        {
+            SerializerOptions = new()
+            {
+                PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase
+            }
+        };
+        _cosmosClient = new CosmosClient(
+            _configuration.GetConnectionString("CosmosDBConnectionString"),
+            clientOptions: clientOptions);
+
+        var db = await _cosmosClient.CreateDatabaseIfNotExistsAsync(_eventStoreOptions.DatabaseName);
+        var eventStreamContainer = await db.Database.DefineContainer(_eventStoreOptions.ContainerName, "/streamId")
+            .WithUniqueKey()
+            .Path("/version")
+            .Attach()
+            .CreateIfNotExistsAsync();
+        
+        var projectionContainer = await db.Database.DefineContainer("ToDoLists", "/id")
+            .CreateIfNotExistsAsync();
+        
+        
+        // Seed Data
+        var toDoListId = Guid.Parse("381cafbf-9126-43ff-bbd4-eda0eef17e97");
+      
+        EventStream stream = new
+        (
+            streamId: toDoListId,
+            eventType: typeof(ToDoListCreatedEvent),
+            version: 1,
+            payload: JsonSerializer.Serialize(new ToDoListCreatedEvent(toDoListId, "Fancy ToDo List"))
+        );
+        await eventStreamContainer.Container.UpsertItemAsync(stream);
+      
+        await projectionContainer.Container.UpsertItemAsync(new
+            { id = toDoListId.ToString(), name = "Fancy ToDo List", items = new List<ToDoItem>() });
+    }
+
+    private void StartAzureFunction()
+    {
+        _process = new Process
+        {
+            StartInfo = new ProcessStartInfo("func", 
+                "host start --pause-on-error --dotnet-isolated-debug")
+            {
+                WorkingDirectory = _configuration.GetSection("WorkingDirectory").Value,
+                // CreateNoWindow = false,
+                // RedirectStandardOutput = true,
+                UseShellExecute = false   //TODO: What is this for? - false allows you to redirect output, also don't have to search path for executable?
+            }
+        };
+
+
+        // TODO: Move to fixture
+        // TODO: Grab logs and exceptions and redirect to output
+        // TODO: Make sure process is successfully disposed and not using port (Func.exe has stopped)
+        // TODO: Figure out how to attach debugger
+        _process.Start();
+        Thread.Sleep(60000);
+
+    }
+
+    private async Task MakeAPICall()
+    {
+        var appHost = await DistributedApplicationTestingBuilder.CreateAsync<Projects.AppHost>();
+        // await using var appHost = new TestingAspireAppHost();
+        // appHost.Configuration.AddJsonFile("appsettings.json").Build();
         appHost.Services.ConfigureHttpClientDefaults(clientBuilder =>
         {
             clientBuilder.AddStandardResilienceHandler();
@@ -40,38 +120,7 @@ public class ToDoListTests : IDisposable
         await app.StartAsync();
         
 
-        _process = new Process
-        {
-            StartInfo = new ProcessStartInfo(@"C:\Users\00009775\.AzureToolsForIntelliJ\AzureFunctionsCoreTools\v4\4.104.0\func.exe", 
-                "host start --pause-on-error --dotnet-isolated-debug")
-            {
-                WorkingDirectory = @"C:\TemporaryWork\FancyToDoApp\The-Fanciest-ToDo-App-You-Will-Ever-See\src\FancyToDo.Functions\bin\Debug\net8.0"
-                // CreateNoWindow = false,
-                // RedirectStandardOutput = true,
-                // UseShellExecute = false
-            }
-        };
 
-
-        // TODO: Move to fixture
-        // TODO: Grab logs and exceptions and redirect to output
-        // TODO: Make sure process is successfully disposed and not using port (Func.exe has stopped)
-        // TODO: Figure out how to attach debugger
-        var processStarted = false;
-        try
-        {
-            processStarted = _process.Start();
-            Thread.Sleep(5000);
-        }
-        catch (Exception e)
-        {
-            Debug.WriteLine(e);            
-        }
-
-        // var functionHost = new WebHostBuilder().UseStartup<FancyToDo.Functions.Program>();
-        // await functionHost.Build().StartAsync();
-
-        // Act
         using var httpClient = app.CreateHttpClient("fancy-api");
         await resourceNotificationService
             .WaitForResourceAsync("fancy-api", KnownResourceStates.Running)
@@ -85,30 +134,29 @@ public class ToDoListTests : IDisposable
             Encoding.UTF8,
             "application/json");
 
-        try
+
+        await httpClient.PostAsync("/todoitems/", jsonContent);
+        Thread.Sleep(15000);
+
+    }
+
+    private async Task ValidateProjectionUpdated()
+    {
+        var container = _cosmosClient.GetContainer(_eventStoreOptions.DatabaseName, "ToDoLists");
+        
+        IOrderedQueryable<ToDoListView> queryable = container.GetItemLinqQueryable<ToDoListView>();
+
+        using FeedIterator<ToDoListView> linqFeed = queryable.ToFeedIterator();
+
+        var records = new List<ToDoListView>();
+        while (linqFeed.HasMoreResults)
         {
-            await httpClient.PostAsync("/todoitems/", jsonContent);
-            Thread.Sleep(5000);
-        }
-        catch (Exception e)
-        {
-            var test = 1;
+            FeedResponse<ToDoListView> response = await linqFeed.ReadNextAsync();
+            records.AddRange(response);
         }
 
-        //
-        // var response = await httpClient.GetAsync("/todolists");
-        // var content = JsonSerializer.Deserialize<GetToDoListResponse>(
-        //     await response.Content.ReadAsStreamAsync(),
-        //     new JsonSerializerOptions()
-        //     {
-        //        PropertyNameCaseInsensitive = true
-        //     });
-        //
-        //
-        // // Assert
-        // Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        // Assert.NotNull(content);
-        // Assert.NotEqual(Guid.Empty, content.Id);
+        var toDoList = records.Single();
+        Assert.Equal("Functional Test", toDoList.Items.Single().Task);
     }
 
     public void Dispose()
@@ -117,5 +165,18 @@ public class ToDoListTests : IDisposable
             _process.Kill(entireProcessTree: true);
  
         _process.Dispose();
+        
+        Task.Run(async () => await _cosmosClient?.GetDatabase(_eventStoreOptions.DatabaseName).DeleteAsync()).Wait();
+        _cosmosClient.Dispose();
     }
 }
+
+
+// public class TestingAspireAppHost() : DistributedApplicationFactory(typeof(Projects.AppHost))
+// {
+//     protected override void OnBuilderCreating(DistributedApplicationOptions applicationOptions,
+//         HostApplicationBuilderSettings hostOptions)
+//     {
+//         hostOptions.Configuration.AddJsonFile("appsettings.json");
+//     }
+// }
