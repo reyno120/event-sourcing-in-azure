@@ -37,14 +37,14 @@ steps:
 #     backendAzureRmContainerName: 'terraform-state'
 #     backendAzureRmKey: 'terraform.tfstate'
 
-- task: CmdLine@2
-  displayName: 'Terraform init'
-  inputs:
-    script: |
-      cd .
-      # ls -la
-      cd terraform
-      # terraform init
+# - task: CmdLine@2
+#   displayName: 'Terraform init'
+#   inputs:
+#     script: |
+#       cd .
+#       # ls -la
+#       cd terraform
+#       # terraform init
 
 - task: TerraformTaskV4@4
   displayName: Terraform init
@@ -56,6 +56,7 @@ steps:
     backendAzureRmStorageAccountName: 'jmreynolds03storage'
     backendAzureRmContainerName: 'terraform-state'
     backendAzureRmKey: 'terraform.tfstate'
+    workingDirectory: terraform
 
 - task: CmdLine@2
   displayName: "Switch to testing Workspace"
