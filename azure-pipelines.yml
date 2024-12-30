@@ -62,12 +62,14 @@ steps:
   displayName: "Switch to testing Workspace"
   inputs:
     script: 'terraform workspace select testing'
+    workingDirectory: terraform
 
 - task: TerraformTaskV4@4
   displayName: Terraform Validate
   inputs:
     provider: 'azurerm'
     command: 'validate'
+    workingDirectory: terraform
     
 - task: TerraformTaskV4@4
   displayName: Terraform Apply
@@ -78,6 +80,7 @@ steps:
     commandOptions: --auto-approve
     customCommand: 'apply -target module.database'
     environmentServiceNameAzureRM: 'azrm'
+    workingDirectory: terraform
 
 - task: Bash@3
   displayName: Install .NET Aspire workload
