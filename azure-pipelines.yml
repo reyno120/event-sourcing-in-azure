@@ -8,9 +8,7 @@
 trigger:
 - automated-testing
 
-pool:
-  vmImage: ubuntu-latest
-  # What will we be using?
+pool: Jacob's Pool
 
 
 variables:
