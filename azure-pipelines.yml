@@ -24,7 +24,7 @@ steps:
     provider: 'azurerm'
     command: 'custom'
     outputTo: 'console'
-    customCommand: 'workspace select testing'
+    customCommand: 'terraform workspace select testing'
     environmentServiceNameAzureRM: 'azrm'
 
 - task: TerraformTaskV4@4
