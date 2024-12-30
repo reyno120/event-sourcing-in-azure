@@ -41,7 +41,7 @@ steps:
   displayName: 'Terraform init'
   inputs:
     script: |
-      cd ..
+      cd .
       ls -la
       cd terraform
       terraform init
