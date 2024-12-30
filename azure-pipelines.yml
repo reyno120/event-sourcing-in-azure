@@ -113,7 +113,7 @@ steps:
 - task: FileTransform@2
   displayName: Replace values in appsettings.json
   inputs:
-    folderPath: 'src/FancyToDo.*'
+    folderPath: 'src'
     enableXmlTransform: false
     xmlTransformationRules: 
     jsonTargetFiles: 'appsettings.json'
