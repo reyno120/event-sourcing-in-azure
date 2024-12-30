@@ -15,6 +15,10 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+- script: ls -la
+  displayName: "list files"
+  workingDirectory: 'src'
+  
 - task: TerraformInstaller@1
   displayName: Install Terraform
   inputs:
@@ -71,9 +75,6 @@ steps:
     targetType: 'inline'
     script: dotnet workload install aspire
 
-- script: ls -la
-  displayName: "list files"
-  workingDirectory: 'src'
 
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
