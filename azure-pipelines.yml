@@ -17,12 +17,12 @@ variables:
 # variables:
 #   buildConfiguration: 'Release'
 
-# - task: CmdLine@2
-#   displayName: 'func'
-#   inputs:
-#     script: func
-
 steps:
+- task: CmdLine@2
+  displayName: 'func'
+  inputs:
+    script: func
+    
 - script: ls -la
   displayName: "list files"
   workingDirectory: 'src'
