@@ -18,11 +18,6 @@ variables:
 #   buildConfiguration: 'Release'
 
 steps:
-- task: CmdLine@2
-  displayName: 'func'
-  inputs:
-    script: func
-    
 - script: ls -la
   displayName: "list files"
   workingDirectory: 'src'
@@ -104,6 +99,36 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
   workingDirectory: 'src'
+  
+- task: DotNetCoreCLI@2
+  displayName: Publish Function App
+  inputs:
+    command: publish
+    arguments: '--configuration $(buildConfiguration) --output publish_output'
+    projects: 'FancyToDo.Functions.csproj'
+    publishWebProjects: false
+    modifyOutputPath: false
+    zipAfterPublish: false
+
+- task: ArchiveFiles@2
+  displayName: "Archive files"
+  inputs:
+    rootFolderOrFile: "$(System.DefaultWorkingDirectory)/publish_output"
+    includeRootFolder: false
+    archiveFile: "$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip"
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip'
+    artifactName: 'drop'
+  
+- task: AzureFunctionApp@2
+  displayName: 'Deploy Function App'
+  inputs:
+    azureSubscription: 'azrm'
+    appType: functionApp # this specifies a Windows-based function app
+    appName: FancyFunction
+    package: $(System.ArtifactsDirectory)/**/*.zip
+    deploymentMethod: 'auto'
 
 - task: DotNetCoreCLI@2
   displayName: "Run Unit Tests"
@@ -125,14 +150,6 @@ steps:
     enableXmlTransform: false
     xmlTransformationRules: 
     jsonTargetFiles: '**/appsettings.json'
-
-# - task: FileTransform@2
-#   displayName: Replace values in API
-#   inputs:
-#     folderPath: 'src/FancyToDo.API'
-#     enableXmlTransform: false
-#     xmlTransformationRules: 
-#     jsonTargetFiles: 'appsettings.json'
   
 # - task: FileTransform@2
 #   displayName: Replace values in Function App
