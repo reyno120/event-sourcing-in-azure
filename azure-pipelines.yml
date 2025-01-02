@@ -17,37 +17,11 @@ variables:
 # variables:
 #   buildConfiguration: 'Release'
 
-steps:
-- script: ls -la
-  displayName: "list files"
-  workingDirectory: 'src'
-  
+steps:  
 - task: TerraformInstaller@1
   displayName: Install Terraform
   inputs:
     terraformVersion: 'latest'
-
-# - task: TerraformTaskV4@4
-#   displayName: Switch to Testing Workspace
-#   inputs:
-#     provider: 'azurerm'
-#     command: 'custom'
-#     outputTo: 'console'
-#     customCommand: 'workspace select testing'
-#     environmentServiceNameAzureRM: 'azrm'
-#     backendAzureRmResourceGroupName: 'automated-testing'
-#     backendAzureRmStorageAccountName: 'jmreynolds03storage'
-#     backendAzureRmContainerName: 'terraform-state'
-#     backendAzureRmKey: 'terraform.tfstate'
-
-# - task: CmdLine@2
-#   displayName: 'Terraform init'
-#   inputs:
-#     script: |
-#       cd .
-#       # ls -la
-#       cd terraform
-#       # terraform init
 
 - task: TerraformTaskV4@4
   displayName: Terraform init
@@ -74,19 +48,10 @@ steps:
     command: 'validate'
     workingDirectory: terraform
     
-# - task: TerraformTaskV4@4
-#   displayName: Terraform Apply
-#   inputs:
-#     provider: 'azurerm'
-#     command: 'custom'
-#     outputTo: 'console'
-#     customCommand: 'apply -target module.database'
-#     environmentServiceNameAzureRM: 'azrm'
-#     workingDirectory: terraform
 - task: CmdLine@2
   displayName: "Terraform Apply"
   inputs:
-    script: 'terraform apply -target module.database -var="database_name=test-db" -var="client_secret=$(client_secret)" -auto-approve'
+    script: 'terraform apply -target module.database -var="resource_group_name=automated-testing-test" -var="client_secret=$(client_secret)" -auto-approve'
     workingDirectory: terraform
 
 - task: Bash@3
