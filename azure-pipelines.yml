@@ -22,6 +22,7 @@ steps:
   displayName: "list"
   inputs:
     script: 'dir'
+    workingDirectory: terraform
 
 - task: TerraformInstaller@1
   displayName: Install Terraform
