@@ -76,7 +76,7 @@ steps:
   inputs:
     command: publish
     arguments: '--configuration $(buildConfiguration) --output publish_output'
-    projects: '*.csproj'
+    projects: '**.csproj'
     publishWebProjects: false
     modifyOutputPath: false
     zipAfterPublish: false
