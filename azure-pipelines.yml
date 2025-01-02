@@ -36,7 +36,7 @@ steps:
     command: 'init'
     backendServiceArm: 'azrm'
     backendAzureRmResourceGroupName: 'automated-testing'
-    backendAzureRmStorageAccountName: 'jmreynolds03storage'
+    backendAzureRmStorageAccountName: 'jmreynolds03storage2'
     backendAzureRmContainerName: 'terraform-state'
     backendAzureRmKey: 'terraform.tfstate'
     workingDirectory: terraform
