@@ -29,22 +29,16 @@ steps:
   inputs:
     terraformVersion: 'latest'
 
-# - task: TerraformTaskV4@4
-#   displayName: Terraform init
-#   inputs:
-#     provider: 'azurerm'
-#     command: 'init'
-#     backendServiceArm: 'azrm'
-#     backendAzureRmResourceGroupName: 'automated-testing'
-#     backendAzureRmStorageAccountName: 'jmreynolds03storage'
-#     backendAzureRmContainerName: 'terraform-state'
-#     backendAzureRmKey: 'terraform.tfstate'
-#     workingDirectory: terraform
-    
-- task: CmdLine@2
-  displayName: "Terraform init"
+- task: TerraformTaskV4@4
+  displayName: Terraform init
   inputs:
-    script: 'terraform init'
+    provider: 'azurerm'
+    command: 'init'
+    backendServiceArm: 'azrm'
+    backendAzureRmResourceGroupName: 'automated-testing'
+    backendAzureRmStorageAccountName: 'jmreynolds03storage'
+    backendAzureRmContainerName: 'terraform-state'
+    backendAzureRmKey: 'terraform.tfstate'
     workingDirectory: terraform
 
 - task: CmdLine@2
