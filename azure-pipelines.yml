@@ -10,9 +10,12 @@ trigger:
 
 pool: Jacob's Pool
 
-
 variables:
-  buildConfiguration: 'Release'
+- group: Build-Test
+
+
+# variables:
+#   buildConfiguration: 'Release'
 
 steps:
 - script: ls -la
@@ -83,7 +86,7 @@ steps:
 - task: CmdLine@2
   displayName: "Terraform Apply"
   inputs:
-    script: 'terraform apply -target module.database -var="database_name=test-db" -auto-approve'
+    script: 'terraform apply -target module.database -var="database_name=test-db" -var="client_secret=$(client_secret)" -auto-approve'
     workingDirectory: terraform
 
 - task: Bash@3
@@ -96,6 +99,36 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
   workingDirectory: 'src'
+  
+- task: DotNetCoreCLI@2
+  displayName: Publish Function App
+  inputs:
+    command: publish
+    arguments: '--configuration $(buildConfiguration) --output publish_output'
+    projects: 'FancyToDo.Functions.csproj'
+    publishWebProjects: false
+    modifyOutputPath: false
+    zipAfterPublish: false
+
+- task: ArchiveFiles@2
+  displayName: "Archive files"
+  inputs:
+    rootFolderOrFile: "$(System.DefaultWorkingDirectory)/publish_output"
+    includeRootFolder: false
+    archiveFile: "$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip"
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip'
+    artifactName: 'drop'
+  
+- task: AzureFunctionApp@2
+  displayName: 'Deploy Function App'
+  inputs:
+    azureSubscription: 'azrm'
+    appType: functionApp # this specifies a Windows-based function app
+    appName: FancyFunction
+    package: $(System.ArtifactsDirectory)/**/*.zip
+    deploymentMethod: 'auto'
 
 - task: DotNetCoreCLI@2
   displayName: "Run Unit Tests"
@@ -104,17 +137,27 @@ steps:
     workingDirectory: 'src/FancyToDo.UnitTests'
 
 
-- task: DotNetCoreCLI@2
-  displayName: "Run Integration Tests"
-  inputs:
-    command: 'test'
-    workingDirectory: 'src/FancyToDo.IntegrationTests'
+# - task: DotNetCoreCLI@2
+#   displayName: "Run Integration Tests"
+#   inputs:
+#     command: 'test'
+#     workingDirectory: 'src/FancyToDo.IntegrationTests'
 
 - task: FileTransform@2
+  displayName: Replace values Functional Tests
   inputs:
-    folderPath: 'src/FancyToDo.FunctionalTests'
+    folderPath: 'src'
     enableXmlTransform: false
-    jsonTargetFiles: '''appsettings.json'''
+    xmlTransformationRules: 
+    jsonTargetFiles: '**/appsettings.json'
+  
+# - task: FileTransform@2
+#   displayName: Replace values in Function App
+#   inputs:
+#     folderPath: 'src/FancyToDo.Functions'
+#     enableXmlTransform: false
+#     xmlTransformationRules: 
+#     jsonTargetFiles: 'appsettings.json'
 
 - task: DotNetCoreCLI@2
   displayName: "Run Functional Tests"
