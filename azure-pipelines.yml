@@ -38,7 +38,7 @@ steps:
 - task: CmdLine@2
   displayName: "Switch to testing Workspace"
   inputs:
-    script: 'terraform workspace select testing'
+    script: 'terraform workspace select test'
     workingDirectory: terraform
 
 - task: TerraformTaskV4@4
