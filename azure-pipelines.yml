@@ -80,7 +80,7 @@ steps:
     publishWebProjects: false
     modifyOutputPath: false
     zipAfterPublish: false
-    workingDirectory: 'src'
+    workingDirectory: 'src/FancyToDo.Functions'
 
 - task: ArchiveFiles@2
   displayName: "Archive files"
