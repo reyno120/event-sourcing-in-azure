@@ -33,7 +33,7 @@ public class ToDoListTests : IDisposable
         
         await InitializeDatabase();
         
-        StartAzureFunction();
+        // StartAzureFunction();
 
         await MakeAPICall();
         
