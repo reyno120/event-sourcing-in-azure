@@ -18,6 +18,11 @@ variables:
 #   buildConfiguration: 'Release'
 
 steps:  
+- task: CmdLine@2
+  displayName: "list"
+  inputs:
+    script: 'dir'
+
 - task: TerraformInstaller@1
   displayName: Install Terraform
   inputs:
