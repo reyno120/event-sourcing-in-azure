@@ -28,6 +28,7 @@ steps:
   inputs:
     provider: 'azurerm'
     command: 'init'
+    commandOptions: -reconfigure
     backendServiceArm: 'azrm'
     backendAzureRmResourceGroupName: 'automated-testing'
     backendAzureRmStorageAccountName: 'jmreynolds03storage'
