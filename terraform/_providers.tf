@@ -7,7 +7,7 @@ terraform {
   }
     backend "azurerm" {
       resource_group_name = "automated-testing"
-      storage_account_name = "jmreynolds03storage"
+      storage_account_name = "jmreynolds03storage2"
       container_name = "terraform-state"
       key = "terraform.tfstate"
     }
