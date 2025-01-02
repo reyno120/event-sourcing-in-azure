@@ -76,11 +76,10 @@ steps:
   inputs:
     command: publish
     arguments: '--configuration $(buildConfiguration) --output publish_output'
-    projects: 'FancyToDo.Functions.csproj'
+    projects: 'src/FancyToDo.Functions/FancyToDo.Functions.csproj'
     publishWebProjects: false
     modifyOutputPath: false
     zipAfterPublish: false
-    workingDirectory: 'src/FancyToDo.Functions'
 
 - task: ArchiveFiles@2
   displayName: "Archive files"
