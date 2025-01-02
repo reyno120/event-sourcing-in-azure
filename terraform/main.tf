@@ -4,7 +4,7 @@ resource "azurerm_resource_group" "example" {
 }
 
 resource "azurerm_cosmosdb_account" "account" {
-  name                = "automated-testing"
+  name                = azurerm_resource_group.example.name
   resource_group_name = azurerm_resource_group.example.name
   offer_type          = "Standard"
   location            = "Central US"
