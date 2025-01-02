@@ -80,6 +80,7 @@ steps:
     publishWebProjects: false
     modifyOutputPath: false
     zipAfterPublish: false
+    workingDirectory: 'src'
 
 - task: ArchiveFiles@2
   displayName: "Archive files"
