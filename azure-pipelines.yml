@@ -65,6 +65,7 @@ steps:
   inputs:
     targetType: 'inline'
     script: dotnet workload install aspire
+    workingDirectory: 'src'
 
 
 - script: dotnet build --configuration $(buildConfiguration)
