@@ -59,6 +59,17 @@ steps:
   inputs:
     script: 'terraform apply -var-file=".test.tfvars" -var="functionApp_name=$(functionApp-name)" -var="client_secret=$(client_secret)" -auto-approve'
     workingDirectory: terraform
+    
+- task: PowerShell@2
+  displayName: 'Extract CosmosDB Connection String'
+  inputs:
+    targetType: 'inline'
+    script: |
+      $tfoutput = (terraform output -raw cosmosDB_connectionString) 
+      Write-Host "##vso[task.setvariable variable=ConnectionStrings.CosmosDBConnectionString;issecret=true]$tfoutput"
+    workingDirectory: 'terraform'
+
+# https://learn.microsoft.com/en-us/azure/devops/pipelines/process/set-variables-scripts?view=azure-devops&tabs=powershell#set-an-output-variable-for-use-in-future-jobs
 
 - task: Bash@3
   displayName: Install .NET Aspire workload
