@@ -65,7 +65,7 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      $tfoutput = (terraform output cosmosDB_connectionString --raw) 
+      $tfoutput = (terraform output -raw cosmosDB_connectionString) 
       Write-Host "##vso[task.setvariable variable=ConnectionStrings.CosmosDBConnectionString;issecret=true]$tfoutput.value"
     workingDirectory: 'terraform'
 
