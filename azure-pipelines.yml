@@ -66,7 +66,7 @@ steps:
     targetType: 'inline'
     script: |
       $tfoutput = (terraform output -raw cosmosDB_connectionString) 
-      Write-Host "##vso[task.setvariable variable=ConnectionStrings.CosmosDBConnectionString;issecret=true]$tfoutput.value"
+      Write-Host "##vso[task.setvariable variable=ConnectionStrings.CosmosDBConnectionString;issecret=true]$tfoutput"
     workingDirectory: 'terraform'
 
 # https://learn.microsoft.com/en-us/azure/devops/pipelines/process/set-variables-scripts?view=azure-devops&tabs=powershell#set-an-output-variable-for-use-in-future-jobs
