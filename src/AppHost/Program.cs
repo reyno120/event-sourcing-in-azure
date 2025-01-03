@@ -1,6 +1,6 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var connectionString = builder.AddConnectionString("local-fancy-cosmos");
+var connectionString = builder.AddConnectionString("CosmosDBConnectionString");
 var db = builder.AddAzureCosmosDB("fancy-cosmos")
     .RunAsEmulator()
     .AddDatabase("fancy-db");
