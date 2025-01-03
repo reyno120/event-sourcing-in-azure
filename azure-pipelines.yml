@@ -75,6 +75,7 @@ steps:
   displayName: 'Restore NuGet packages'
   inputs:
     command: 'restore'
+    projects: 'src/FancyToDo.Functions/FancyToDo.Functions.csproj'
 
 - task: DotNetCoreCLI@2
   displayName: Build
