@@ -57,7 +57,7 @@ steps:
 - task: CmdLine@2
   displayName: "Terraform Apply"
   inputs:
-    script: 'terraform apply -var="resource_group_name=automated-testing-test" -var="client_secret=$(client_secret)" -auto-approve'
+    script: 'terraform apply -var-file=".test.tfvars" -var="functionApp_name=$(functionApp-name)" -var="client_secret=$(client_secret)" -auto-approve'
     workingDirectory: terraform
 
 - task: Bash@3
@@ -120,9 +120,9 @@ steps:
   artifact: drop
 - task: AzureFunctionApp@2
   inputs:
-    azureSubscription: 'azrm'
+    azureSubscription: 'azrm-all'
     appType: functionApp
-    appName: jmreynolds03-functionApp
+    appName: $(functionApp-name)
     package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
     deploymentMethod: 'zipDeploy'
   
