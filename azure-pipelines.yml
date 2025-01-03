@@ -71,43 +71,68 @@ steps:
 #   displayName: 'dotnet build $(buildConfiguration)'
 #   workingDirectory: 'src'
 
+- task: 'DotNetCoreCLI@2'
+  displayName: 'Restore NuGet packages'
+  inputs:
+    command: 'restore'
+
 - task: DotNetCoreCLI@2
   displayName: Build
   inputs:
     command: 'build'
     projects: 'src/FancyToDo.Functions/FancyToDo.Functions.csproj'
-    arguments: --output publish_output --configuration $(buildConfiguration)
+    arguments: --output $(System.DefaultWorkingDirectory)/publish_output --configuration $(buildConfiguration)
     # $(System.DefaultWorkingDirectory)/
   
-- task: DotNetCoreCLI@2
-  displayName: Publish Function App
-  inputs:
-    command: publish
-    arguments: '--configuration $(buildConfiguration) --output publish_output'
-    projects: 'src/FancyToDo.Functions/FancyToDo.Functions.csproj'
-    publishWebProjects: false
-    modifyOutputPath: false
-    zipAfterPublish: false
-
+# - task: DotNetCoreCLI@2
+#   displayName: Publish Function App
+#   inputs:
+#     command: publish
+#     arguments: '--configuration $(buildConfiguration) --output publish_output'
+#     projects: 'src/FancyToDo.Functions/FancyToDo.Functions.csproj'
+#     publishWebProjects: false
+#     modifyOutputPath: false
+#     zipAfterPublish: false
 - task: ArchiveFiles@2
-  displayName: "Archive files"
+  displayName: 'Archive files'
   inputs:
-    rootFolderOrFile: "$(System.DefaultWorkingDirectory)/publish_output"
+    rootFolderOrFile: '$(System.DefaultWorkingDirectory)/publish_output'
     includeRootFolder: false
-    archiveFile: "$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip"
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip'
-    artifactName: 'drop'
-  
+    archiveType: zip
+    archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+    replaceExistingArchive: true
+- publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+  artifact: drop
+
+# - task: ArchiveFiles@2
+#   displayName: "Archive files"
+#   inputs:
+#     rootFolderOrFile: "$(System.DefaultWorkingDirectory)/publish_output"
+#     includeRootFolder: false
+#     archiveFile: "$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip"
+# - task: PublishBuildArtifacts@1
+#   inputs:
+#     PathtoPublish: '$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip'
+#     artifactName: 'drop'
+
+- download: current
+  artifact: drop
 - task: AzureFunctionApp@2
-  displayName: 'Deploy Function App'
   inputs:
     azureSubscription: 'azrm'
-    appType: functionApp # this specifies a Windows-based function app
-    appName: FancyFunction
-    package: $(System.ArtifactsDirectory)/**/*.zip
-    deploymentMethod: 'auto'
+    appType: functionApp
+    appName: jmreynolds03-functionApp
+    package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
+    deploymentMethod: 'zipDeploy'
+  
+# - task: AzureFunctionApp@2
+#   displayName: 'Deploy Function App'
+#   inputs:
+#     azureSubscription: 'azrm'
+#     appType: functionApp # this specifies a Windows-based function app
+#     appName: FancyFunction
+#     package: $(System.ArtifactsDirectory)/**/*.zip
+#     deploymentMethod: 'auto'
 
 - task: DotNetCoreCLI@2
   displayName: "Run Unit Tests"
