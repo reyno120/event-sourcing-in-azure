@@ -57,7 +57,7 @@ steps:
 - task: CmdLine@2
   displayName: "Terraform Apply"
   inputs:
-    script: 'terraform apply -target module.database -var="resource_group_name=automated-testing-test" -var="client_secret=$(client_secret)" -auto-approve'
+    script: 'terraform apply -var="resource_group_name=automated-testing-test" -var="client_secret=$(client_secret)" -auto-approve'
     workingDirectory: terraform
 
 - task: Bash@3
@@ -67,39 +67,73 @@ steps:
     script: dotnet workload install aspire
 
 
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
-  workingDirectory: 'src'
-  
-- task: DotNetCoreCLI@2
-  displayName: Publish Function App
-  inputs:
-    command: publish
-    arguments: '--configuration $(buildConfiguration) --output publish_output'
-    projects: 'src/FancyToDo.Functions/FancyToDo.Functions.csproj'
-    publishWebProjects: false
-    modifyOutputPath: false
-    zipAfterPublish: false
+# - script: dotnet build --configuration $(buildConfiguration)
+#   displayName: 'dotnet build $(buildConfiguration)'
+#   workingDirectory: 'src'
 
-- task: ArchiveFiles@2
-  displayName: "Archive files"
+- task: 'DotNetCoreCLI@2'
+  displayName: 'Restore NuGet packages'
   inputs:
-    rootFolderOrFile: "$(System.DefaultWorkingDirectory)/publish_output"
-    includeRootFolder: false
-    archiveFile: "$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip"
-- task: PublishBuildArtifacts@1
+    command: 'restore'
+    projects: 'src/FancyToDo.Functions/FancyToDo.Functions.csproj'
+
+- task: DotNetCoreCLI@2
+  displayName: Build
   inputs:
-    PathtoPublish: '$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip'
-    artifactName: 'drop'
+    command: 'build'
+    projects: 'src/FancyToDo.Functions/FancyToDo.Functions.csproj'
+    arguments: --output $(System.DefaultWorkingDirectory)/publish_output --configuration $(buildConfiguration)
+    # $(System.DefaultWorkingDirectory)/
   
+# - task: DotNetCoreCLI@2
+#   displayName: Publish Function App
+#   inputs:
+#     command: publish
+#     arguments: '--configuration $(buildConfiguration) --output publish_output'
+#     projects: 'src/FancyToDo.Functions/FancyToDo.Functions.csproj'
+#     publishWebProjects: false
+#     modifyOutputPath: false
+#     zipAfterPublish: false
+- task: ArchiveFiles@2
+  displayName: 'Archive files'
+  inputs:
+    rootFolderOrFile: '$(System.DefaultWorkingDirectory)/publish_output'
+    includeRootFolder: false
+    archiveType: zip
+    archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+    replaceExistingArchive: true
+- publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+  artifact: drop
+
+# - task: ArchiveFiles@2
+#   displayName: "Archive files"
+#   inputs:
+#     rootFolderOrFile: "$(System.DefaultWorkingDirectory)/publish_output"
+#     includeRootFolder: false
+#     archiveFile: "$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip"
+# - task: PublishBuildArtifacts@1
+#   inputs:
+#     PathtoPublish: '$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip'
+#     artifactName: 'drop'
+
+- download: current
+  artifact: drop
 - task: AzureFunctionApp@2
-  displayName: 'Deploy Function App'
   inputs:
     azureSubscription: 'azrm'
-    appType: functionApp # this specifies a Windows-based function app
-    appName: FancyFunction
-    package: $(System.ArtifactsDirectory)/**/*.zip
-    deploymentMethod: 'auto'
+    appType: functionApp
+    appName: jmreynolds03-functionApp
+    package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
+    deploymentMethod: 'zipDeploy'
+  
+# - task: AzureFunctionApp@2
+#   displayName: 'Deploy Function App'
+#   inputs:
+#     azureSubscription: 'azrm'
+#     appType: functionApp # this specifies a Windows-based function app
+#     appName: FancyFunction
+#     package: $(System.ArtifactsDirectory)/**/*.zip
+#     deploymentMethod: 'auto'
 
 - task: DotNetCoreCLI@2
   displayName: "Run Unit Tests"
