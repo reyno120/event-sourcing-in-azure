@@ -120,7 +120,7 @@ steps:
   artifact: drop
 - task: AzureFunctionApp@2
   inputs:
-    azureSubscription: 'azrm'
+    azureSubscription: 'azrm-all'
     appType: functionApp
     appName: $(functionApp-name)
     package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
