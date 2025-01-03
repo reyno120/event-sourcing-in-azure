@@ -21,8 +21,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FancyToDo.UnitTests", "Fanc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FancyToDo.IntegrationTests", "FancyToDo.IntegrationTests\FancyToDo.IntegrationTests.csproj", "{88DABA51-6BC6-4835-AEBA-7DC46555CEC6}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{A2AA4257-312C-4605-937F-BFE8219F9C02}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.EventSourcing.EventStore", "SharedKernel.EventSourcing.EventStore\SharedKernel.EventSourcing.EventStore.csproj", "{CE71017F-0ECC-4689-A935-B19B9D20C4E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppHost.ServiceDefaults", "AppHost.ServiceDefaults\AppHost.ServiceDefaults.csproj", "{38009083-8B07-46FD-ACE6-3EA67ED8B768}"
@@ -88,7 +86,5 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{DEBE92DB-FA58-45A3-9E06-780FD30C4DF7} = {A2AA4257-312C-4605-937F-BFE8219F9C02}
-		{CE71017F-0ECC-4689-A935-B19B9D20C4E8} = {A2AA4257-312C-4605-937F-BFE8219F9C02}
 	EndGlobalSection
 EndGlobal

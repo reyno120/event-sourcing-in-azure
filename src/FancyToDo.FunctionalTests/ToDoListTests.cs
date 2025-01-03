@@ -161,12 +161,12 @@ public class ToDoListTests : IDisposable
 
     public void Dispose()
     {
-        if (!_process.HasExited)
-            _process.Kill(entireProcessTree: true);
- 
-        _process.Dispose();
+        // if (!_process.HasExited)
+        //     _process.Kill(entireProcessTree: true);
+        //
+        // _process.Dispose();
         
-        Task.Run(async () => await _cosmosClient?.GetDatabase(_eventStoreOptions.DatabaseName).DeleteAsync()).Wait();
+        // Task.Run(async () => await _cosmosClient?.GetDatabase(_eventStoreOptions.DatabaseName).DeleteAsync()).Wait();
         _cosmosClient.Dispose();
     }
 }
