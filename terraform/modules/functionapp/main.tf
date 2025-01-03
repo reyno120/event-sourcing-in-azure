@@ -18,6 +18,11 @@ resource "azurerm_windows_function_app" "functionApp" {
     ContainerName = "ToDoListEventStream"
     CosmosDBConnectionString = var.cosmosdb_connectionstring
   }
+  connection_string {
+    name  = "CosmosDBConnectionString"
+    type  = "DocDb"
+    value = var.cosmosdb_connectionstring
+  }
 
   site_config {}
 }
