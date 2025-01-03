@@ -1,13 +1,13 @@
 resource "azurerm_resource_group" "example" {
   name     = var.resource_group_name
-  location = "Central US"
+  location = var.location
 }
 
 resource "azurerm_cosmosdb_account" "account" {
   name                = azurerm_resource_group.example.name
   resource_group_name = azurerm_resource_group.example.name
   offer_type          = "Standard"
-  location            = "Central US"
+  location            = var.location
   tags = {
     "defaultExperience" = "Core (SQL)"
   }
@@ -22,14 +22,14 @@ resource "azurerm_cosmosdb_account" "account" {
   }
 
   geo_location {
-    location          = "centralus"
+    location          = var.location
     failover_priority = 0
     zone_redundant    = false
   }
 }
 
 resource "azurerm_storage_account" "storage_account" {
-  name                     = "automatedtestinga47f"
+  name                     = var.storage_account_name
   resource_group_name      = azurerm_resource_group.example.name
   location                 = azurerm_resource_group.example.location
   account_tier             = "Standard"
@@ -37,9 +37,9 @@ resource "azurerm_storage_account" "storage_account" {
 }
 
 resource "azurerm_service_plan" "service_plan" {
-  name                = "ASP-automatedtesting-a68c"
+  name                = var.service_plan_name
   resource_group_name = azurerm_resource_group.example.name
-  location            = "centralus"
+  location            = var.location
   os_type             = "Windows"
   sku_name            = "Y1"
 }
@@ -47,11 +47,11 @@ resource "azurerm_service_plan" "service_plan" {
 module "functionApp" {
   source = "./modules/functionapp"
 
-  functionApp_name          = "jmreynolds03-functionApp"
+  functionApp_name          = var.functionApp_name
   resource_group            = azurerm_resource_group.example
   storage_account           = azurerm_storage_account.storage_account
   service_plan              = azurerm_service_plan.service_plan
-  database_name             = "fancy-db"
+  database_name             = var.database_name
   cosmosdb_connectionstring = azurerm_cosmosdb_account.account.primary_sql_connection_string
 }
 
@@ -60,5 +60,5 @@ module "database" {
 
   account_name        = azurerm_cosmosdb_account.account.name
   resource_group_name = azurerm_resource_group.example.name
-  database_name       = "fancy-db"
+  database_name       = var.database_name
 }

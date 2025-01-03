@@ -1,0 +1,6 @@
+﻿location = "Central US"
+resource_group_name = "automated-testing-test"
+storage_account_name = "automatedtestinga47ftest"
+service_plan_name = "ASP-automatedtesting-a68c-test"
+database_name = "fancy-db"
+functionApp_name = "jmreynolds03-functionApp-test"
