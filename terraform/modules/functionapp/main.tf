@@ -17,6 +17,7 @@ resource "azurerm_windows_function_app" "functionApp" {
     DatabaseName  = var.database_name
     ContainerName = "ToDoListEventStream"
     CosmosDBConnectionString = var.cosmosdb_connectionstring
+    FUNCTIONS_WORKER_RUNTIME: "dotnet-isolated"
   }
   connection_string {
     name  = "CosmosDBConnectionString"
