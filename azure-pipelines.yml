@@ -10,174 +10,151 @@ trigger:
 
 pool: Jacob's Pool
 
-variables:
-- group: Build-Test
+variables: 
+  buildConfiguration: 'Release'
 
+jobs:
+  - job: Create_Resources
+    steps:
+    - task: TerraformInstaller@1
+      displayName: Install Terraform
+      inputs:
+        terraformVersion: 'latest'
 
-# variables:
-#   buildConfiguration: 'Release'
+    - task: TerraformTaskV4@4
+      displayName: Terraform init
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        backendServiceArm: 'azrm'
+        backendAzureRmResourceGroupName: 'automated-testing'
+        backendAzureRmStorageAccountName: 'jmreynolds03storage'
+        backendAzureRmContainerName: 'terraform-state'
+        backendAzureRmKey: 'terraform.tfstate'
+        workingDirectory: terraform
 
-steps:  
-# - task: CmdLine@2
-#   displayName: "list"
-#   inputs:
-#     script: 'rmdir .terraform'
-#     workingDirectory: terraform
+    - task: CmdLine@2
+      displayName: "Switch to testing Workspace"
+      inputs:
+        script: 'terraform workspace select test'
+        workingDirectory: terraform
 
-- task: TerraformInstaller@1
-  displayName: Install Terraform
-  inputs:
-    terraformVersion: 'latest'
+    - task: TerraformTaskV4@4
+      displayName: Terraform Validate
+      inputs:
+        provider: 'azurerm'
+        command: 'validate'
+        workingDirectory: terraform
+      
+    - task: CmdLine@2
+      displayName: "Terraform Apply"
+      inputs:
+        script: 'terraform apply -var-file=".test.tfvars" -var="functionApp_name=$(functionApp-name)" -var="client_secret=$(client_secret)" -auto-approve'
+        workingDirectory: terraform
+      
+    - task: PowerShell@2
+      displayName: 'Extract CosmosDB Connection String'
+      inputs:
+        targetType: 'inline'
+        script: |
+          $tfoutput = (terraform output -raw cosmosDB_connectionString) 
+          Write-Host "##vso[task.setvariable variable=CosmosDBConnectionString;issecret=true]$tfoutput"
+        workingDirectory: 'terraform'
+        name: DatabaseConnectionStringOutput
+  # https://learn.microsoft.com/en-us/azure/devops/pipelines/process/set-variables-scripts?view=azure-devops&tabs=powershell#set-an-output-variable-for-use-in-future-jobs
 
-- task: TerraformTaskV4@4
-  displayName: Terraform init
-  inputs:
-    provider: 'azurerm'
-    command: 'init'
-    backendServiceArm: 'azrm'
-    backendAzureRmResourceGroupName: 'automated-testing'
-    backendAzureRmStorageAccountName: 'jmreynolds03storage'
-    backendAzureRmContainerName: 'terraform-state'
-    backendAzureRmKey: 'terraform.tfstate'
-    workingDirectory: terraform
+#------------------------------------------------------------------------------------
 
-- task: CmdLine@2
-  displayName: "Switch to testing Workspace"
-  inputs:
-    script: 'terraform workspace select test'
-    workingDirectory: terraform
+  - job: Build_Deploy_App
+    dependsOn: Create_Resources
+    variables:
+      ConnectionStrings.CosmosDBConnectionString: $[ dependencies.Create_Resources.outputs['DatabaseConnectionStringOutput.CosmosDBConnectionString'] ]
+      EventStores.ToDoListEventStore.DatabaseName: fancy-db
+      Projection.DatabaseName: fancy-db
+      ToDoListEventStore.DatabaseName: fancy-db
 
-- task: TerraformTaskV4@4
-  displayName: Terraform Validate
-  inputs:
-    provider: 'azurerm'
-    command: 'validate'
-    workingDirectory: terraform
-    
-- task: CmdLine@2
-  displayName: "Terraform Apply"
-  inputs:
-    script: 'terraform apply -var-file=".test.tfvars" -var="functionApp_name=$(functionApp-name)" -var="client_secret=$(client_secret)" -auto-approve'
-    workingDirectory: terraform
-    
-- task: PowerShell@2
-  displayName: 'Extract CosmosDB Connection String'
-  inputs:
-    targetType: 'inline'
-    script: |
-      $tfoutput = (terraform output -raw cosmosDB_connectionString) 
-      Write-Host "##vso[task.setvariable variable=ConnectionStrings.CosmosDBConnectionString;issecret=true]$tfoutput"
-    workingDirectory: 'terraform'
+    steps:
+    - task: FileTransform@2
+      displayName: Replace values in appsettings
+      inputs:
+        folderPath: 'src'
+        enableXmlTransform: false
+        xmlTransformationRules: 
+        jsonTargetFiles: '**/appsettings.json'
 
-# https://learn.microsoft.com/en-us/azure/devops/pipelines/process/set-variables-scripts?view=azure-devops&tabs=powershell#set-an-output-variable-for-use-in-future-jobs
+    - task: 'DotNetCoreCLI@2'
+      displayName: 'Restore NuGet packages'
+      inputs:
+        command: 'restore'
+        projects: 'src/FancyToDo.Functions/FancyToDo.Functions.csproj'
 
-- task: Bash@3
-  displayName: Install .NET Aspire workload
-  inputs:
-    targetType: 'inline'
-    script: dotnet workload install aspire
+    - task: DotNetCoreCLI@2
+      displayName: Build
+      inputs:
+        command: 'build'
+        projects: 'src/FancyToDo.Functions/FancyToDo.Functions.csproj'
+        arguments: --output $(System.DefaultWorkingDirectory)/publish_output --configuration $(buildConfiguration)
+        
+    - task: ArchiveFiles@2
+      displayName: 'Archive files'
+      inputs:
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/publish_output'
+        includeRootFolder: false
+        archiveType: zip
+        archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+        replaceExistingArchive: true
+    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+      artifact: drop
 
-
-# - script: dotnet build --configuration $(buildConfiguration)
-#   displayName: 'dotnet build $(buildConfiguration)'
-#   workingDirectory: 'src'
-
-- task: FileTransform@2
-  displayName: Replace values in appsettings
-  inputs:
-    folderPath: 'src'
-    enableXmlTransform: false
-    xmlTransformationRules: 
-    jsonTargetFiles: '**/appsettings.json'
-
-- task: 'DotNetCoreCLI@2'
-  displayName: 'Restore NuGet packages'
-  inputs:
-    command: 'restore'
-    projects: 'src/FancyToDo.Functions/FancyToDo.Functions.csproj'
-
-- task: DotNetCoreCLI@2
-  displayName: Build
-  inputs:
-    command: 'build'
-    projects: 'src/FancyToDo.Functions/FancyToDo.Functions.csproj'
-    arguments: --output $(System.DefaultWorkingDirectory)/publish_output --configuration $(buildConfiguration)
-    # $(System.DefaultWorkingDirectory)/
+    - download: current
+      artifact: drop
+    - task: AzureFunctionApp@2
+      displayName: 'Deploy Azure Function'
+      inputs:
+        azureSubscription: 'azrm-all'
+        appType: functionApp
+        appName: $(functionApp-name)
+        package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
+        deploymentMethod: 'zipDeploy'
   
-# - task: DotNetCoreCLI@2
-#   displayName: Publish Function App
-#   inputs:
-#     command: publish
-#     arguments: '--configuration $(buildConfiguration) --output publish_output'
-#     projects: 'src/FancyToDo.Functions/FancyToDo.Functions.csproj'
-#     publishWebProjects: false
-#     modifyOutputPath: false
-#     zipAfterPublish: false
-    
-- task: ArchiveFiles@2
-  displayName: 'Archive files'
-  inputs:
-    rootFolderOrFile: '$(System.DefaultWorkingDirectory)/publish_output'
-    includeRootFolder: false
-    archiveType: zip
-    archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
-    replaceExistingArchive: true
-- publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
-  artifact: drop
+  - job: Run_Integration_Tests
+    steps:
+    - task: Bash@3
+      displayName: Install .NET Aspire workload
+      inputs:
+        targetType: 'inline'
+        script: dotnet workload install aspire
 
-# - task: ArchiveFiles@2
-#   displayName: "Archive files"
-#   inputs:
-#     rootFolderOrFile: "$(System.DefaultWorkingDirectory)/publish_output"
-#     includeRootFolder: false
-#     archiveFile: "$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip"
-# - task: PublishBuildArtifacts@1
-#   inputs:
-#     PathtoPublish: '$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip'
-#     artifactName: 'drop'
+    - task: DotNetCoreCLI@2
+      displayName: "Run Functional Tests"
+      inputs:
+        command: 'test'
+        workingDirectory: 'src/FancyToDo.FunctionalTests'
 
-- download: current
-  artifact: drop
-- task: AzureFunctionApp@2
-  inputs:
-    azureSubscription: 'azrm-all'
-    appType: functionApp
-    appName: $(functionApp-name)
-    package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
-    deploymentMethod: 'zipDeploy'
-  
-# - task: AzureFunctionApp@2
-#   displayName: 'Deploy Function App'
-#   inputs:
-#     azureSubscription: 'azrm'
-#     appType: functionApp # this specifies a Windows-based function app
-#     appName: FancyFunction
-#     package: $(System.ArtifactsDirectory)/**/*.zip
-#     deploymentMethod: 'auto'
+#----------------------------------------------------------------------
 
-- task: DotNetCoreCLI@2
-  displayName: "Run Unit Tests"
-  inputs:
-    command: 'test'
-    workingDirectory: 'src/FancyToDo.UnitTests'
+  - job: Destroy_Resources
+    steps:
+    - task: TerraformInstaller@1
+      displayName: Install Terraform
+      inputs:
+        terraformVersion: 'latest'
 
+    - task: TerraformTaskV4@4
+      displayName: Terraform init
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        backendServiceArm: 'azrm'
+        backendAzureRmResourceGroupName: 'automated-testing'
+        backendAzureRmStorageAccountName: 'jmreynolds03storage'
+        backendAzureRmContainerName: 'terraform-state'
+        backendAzureRmKey: 'terraform.tfstate'
+        workingDirectory: terraform
 
-# - task: DotNetCoreCLI@2
-#   displayName: "Run Integration Tests"
-#   inputs:
-#     command: 'test'
-#     workingDirectory: 'src/FancyToDo.IntegrationTests'
-
-# - task: FileTransform@2
-#   displayName: Replace values Functional Tests
-#   inputs:
-#     folderPath: 'src'
-#     enableXmlTransform: false
-#     xmlTransformationRules: 
-#     jsonTargetFiles: '**/appsettings.json'
-
-- task: DotNetCoreCLI@2
-  displayName: "Run Functional Tests"
-  inputs:
-    command: 'test'
-    workingDirectory: 'src/FancyToDo.FunctionalTests'
+    - task: TerraformTaskV4@4
+      displayName: Terraform Destroy
+      inputs:
+        provider: 'azurerm'
+        command: 'destroy'
+        environmentServiceNameAzureRM: 'azrm-all'
