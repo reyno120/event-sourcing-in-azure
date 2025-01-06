@@ -116,8 +116,13 @@ steps:
   displayName: "Run Unit Tests"
   inputs:
     command: 'test'
-    workingDirectory: 'src/FancyToDo.Units'
-  
+    workingDirectory: 'src/FancyToDo.UnitTests'
+
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: 'Start-Sleep -Seconds 120'
+
 - task: DotNetCoreCLI@2
   displayName: "Run Functional Tests"
   inputs:
