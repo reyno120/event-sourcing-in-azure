@@ -13,16 +13,7 @@ pool: Jacob's Pool
 variables:
 - group: Build-Test
 
-
-# variables:
-#   buildConfiguration: 'Release'
-
 steps:  
-# - task: CmdLine@2
-#   displayName: "list"
-#   inputs:
-#     script: 'rmdir .terraform'
-#     workingDirectory: terraform
 
 - task: TerraformInstaller@1
   displayName: Install Terraform
@@ -77,10 +68,13 @@ steps:
     targetType: 'inline'
     script: dotnet workload install aspire
 
-
-# - script: dotnet build --configuration $(buildConfiguration)
-#   displayName: 'dotnet build $(buildConfiguration)'
-#   workingDirectory: 'src'
+- task: FileTransform@2
+  displayName: Replace values appsettings
+  inputs:
+    folderPath: 'src'
+    enableXmlTransform: false
+    xmlTransformationRules: 
+    jsonTargetFiles: '**/appsettings.json'
 
 - task: 'DotNetCoreCLI@2'
   displayName: 'Restore NuGet packages'
@@ -94,17 +88,8 @@ steps:
     command: 'build'
     projects: 'src/FancyToDo.Functions/FancyToDo.Functions.csproj'
     arguments: --output $(System.DefaultWorkingDirectory)/publish_output --configuration $(buildConfiguration)
-    # $(System.DefaultWorkingDirectory)/
   
-# - task: DotNetCoreCLI@2
-#   displayName: Publish Function App
-#   inputs:
-#     command: publish
-#     arguments: '--configuration $(buildConfiguration) --output publish_output'
-#     projects: 'src/FancyToDo.Functions/FancyToDo.Functions.csproj'
-#     publishWebProjects: false
-#     modifyOutputPath: false
-#     zipAfterPublish: false
+    
 - task: ArchiveFiles@2
   displayName: 'Archive files'
   inputs:
@@ -116,67 +101,34 @@ steps:
 - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
   artifact: drop
 
-# - task: ArchiveFiles@2
-#   displayName: "Archive files"
-#   inputs:
-#     rootFolderOrFile: "$(System.DefaultWorkingDirectory)/publish_output"
-#     includeRootFolder: false
-#     archiveFile: "$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip"
-# - task: PublishBuildArtifacts@1
-#   inputs:
-#     PathtoPublish: '$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip'
-#     artifactName: 'drop'
-
 - download: current
   artifact: drop
 - task: AzureFunctionApp@2
+  displayName: "Deploy Azure Function App"
   inputs:
     azureSubscription: 'azrm-all'
     appType: functionApp
     appName: $(functionApp-name)
     package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
     deploymentMethod: 'zipDeploy'
-  
-# - task: AzureFunctionApp@2
-#   displayName: 'Deploy Function App'
-#   inputs:
-#     azureSubscription: 'azrm'
-#     appType: functionApp # this specifies a Windows-based function app
-#     appName: FancyFunction
-#     package: $(System.ArtifactsDirectory)/**/*.zip
-#     deploymentMethod: 'auto'
 
 - task: DotNetCoreCLI@2
   displayName: "Run Unit Tests"
   inputs:
     command: 'test'
-    workingDirectory: 'src/FancyToDo.UnitTests'
-
-
-# - task: DotNetCoreCLI@2
-#   displayName: "Run Integration Tests"
-#   inputs:
-#     command: 'test'
-#     workingDirectory: 'src/FancyToDo.IntegrationTests'
-
-- task: FileTransform@2
-  displayName: Replace values Functional Tests
-  inputs:
-    folderPath: 'src'
-    enableXmlTransform: false
-    xmlTransformationRules: 
-    jsonTargetFiles: '**/appsettings.json'
+    workingDirectory: 'src/FancyToDo.Units'
   
-# - task: FileTransform@2
-#   displayName: Replace values in Function App
-#   inputs:
-#     folderPath: 'src/FancyToDo.Functions'
-#     enableXmlTransform: false
-#     xmlTransformationRules: 
-#     jsonTargetFiles: 'appsettings.json'
-
 - task: DotNetCoreCLI@2
   displayName: "Run Functional Tests"
   inputs:
     command: 'test'
     workingDirectory: 'src/FancyToDo.FunctionalTests'
+
+- task: TerraformTaskV4@4
+  displayName: 'Terraform Destroy'
+  inputs:
+    provider: 'azurerm'
+    command: 'destroy'
+    workingDirectory: 'terraform'
+    commandOptions: '-var-file=".test.tfvars" -var="functionApp_name=$(functionApp-name)" -var="client_secret=$(client_secret)" -auto-approve'
+    environmentServiceNameAzureRM: 'azrm-all'
