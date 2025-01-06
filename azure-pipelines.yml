@@ -82,6 +82,14 @@ steps:
 #   displayName: 'dotnet build $(buildConfiguration)'
 #   workingDirectory: 'src'
 
+- task: FileTransform@2
+  displayName: Replace values in appsettings
+  inputs:
+    folderPath: 'src'
+    enableXmlTransform: false
+    xmlTransformationRules: 
+    jsonTargetFiles: '**/appsettings.json'
+
 - task: 'DotNetCoreCLI@2'
   displayName: 'Restore NuGet packages'
   inputs:
@@ -105,14 +113,6 @@ steps:
 #     publishWebProjects: false
 #     modifyOutputPath: false
 #     zipAfterPublish: false
-
-- task: FileTransform@2
-  displayName: Replace values Functional Tests
-  inputs:
-    folderPath: 'src'
-    enableXmlTransform: false
-    xmlTransformationRules: 
-    jsonTargetFiles: '**/appsettings.json'
     
 - task: ArchiveFiles@2
   displayName: 'Archive files'
