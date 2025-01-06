@@ -111,6 +111,12 @@ steps:
     appName: $(functionApp-name)
     package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
     deploymentMethod: 'zipDeploy'
+
+- task: DotNetCoreCLI@2
+  displayName: "Run Unit Tests"
+  inputs:
+    command: 'test'
+    workingDirectory: 'src/FancyToDo.Units'
   
 - task: DotNetCoreCLI@2
   displayName: "Run Functional Tests"
