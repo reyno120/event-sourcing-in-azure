@@ -15,50 +15,50 @@ variables:
 
 steps:  
 
-# - task: TerraformInstaller@1
-#   displayName: Install Terraform
-#   inputs:
-#     terraformVersion: 'latest'
+- task: TerraformInstaller@1
+  displayName: Install Terraform
+  inputs:
+    terraformVersion: 'latest'
 
-# - task: TerraformTaskV4@4
-#   displayName: Terraform init
-#   inputs:
-#     provider: 'azurerm'
-#     command: 'init'
-#     backendServiceArm: 'azrm'
-#     backendAzureRmResourceGroupName: 'automated-testing'
-#     backendAzureRmStorageAccountName: 'jmreynolds03storage'
-#     backendAzureRmContainerName: 'terraform-state'
-#     backendAzureRmKey: 'terraform.tfstate'
-#     workingDirectory: terraform
+- task: TerraformTaskV4@4
+  displayName: Terraform init
+  inputs:
+    provider: 'azurerm'
+    command: 'init'
+    backendServiceArm: 'azrm'
+    backendAzureRmResourceGroupName: 'automated-testing'
+    backendAzureRmStorageAccountName: 'jmreynolds03storage'
+    backendAzureRmContainerName: 'terraform-state'
+    backendAzureRmKey: 'terraform.tfstate'
+    workingDirectory: terraform
 
-# - task: CmdLine@2
-#   displayName: "Switch to testing Workspace"
-#   inputs:
-#     script: 'terraform workspace select test'
-#     workingDirectory: terraform
+- task: CmdLine@2
+  displayName: "Switch to testing Workspace"
+  inputs:
+    script: 'terraform workspace select test'
+    workingDirectory: terraform
 
-# - task: TerraformTaskV4@4
-#   displayName: Terraform Validate
-#   inputs:
-#     provider: 'azurerm'
-#     command: 'validate'
-#     workingDirectory: terraform
+- task: TerraformTaskV4@4
+  displayName: Terraform Validate
+  inputs:
+    provider: 'azurerm'
+    command: 'validate'
+    workingDirectory: terraform
     
-# - task: CmdLine@2
-#   displayName: "Terraform Apply"
-#   inputs:
-#     script: 'terraform apply -var-file=".test.tfvars" -var="functionApp_name=$(functionApp-name)" -var="client_secret=$(client_secret)" -auto-approve'
-#     workingDirectory: terraform
+- task: CmdLine@2
+  displayName: "Terraform Apply"
+  inputs:
+    script: 'terraform apply -var-file=".test.tfvars" -var="functionApp_name=$(functionApp-name)" -var="client_secret=$(client_secret)" -auto-approve'
+    workingDirectory: terraform
     
-# - task: PowerShell@2
-#   displayName: 'Extract CosmosDB Connection String'
-#   inputs:
-#     targetType: 'inline'
-#     script: |
-#       $tfoutput = (terraform output -raw cosmosDB_connectionString) 
-#       Write-Host "##vso[task.setvariable variable=ConnectionStrings.CosmosDBConnectionString;issecret=true]$tfoutput"
-#     workingDirectory: 'terraform'
+- task: PowerShell@2
+  displayName: 'Extract CosmosDB Connection String'
+  inputs:
+    targetType: 'inline'
+    script: |
+      $tfoutput = (terraform output -raw cosmosDB_connectionString) 
+      Write-Host "##vso[task.setvariable variable=ConnectionStrings.CosmosDBConnectionString;issecret=true]$tfoutput"
+    workingDirectory: 'terraform'
 
 # https://learn.microsoft.com/en-us/azure/devops/pipelines/process/set-variables-scripts?view=azure-devops&tabs=powershell#set-an-output-variable-for-use-in-future-jobs
 
@@ -118,6 +118,10 @@ steps:
     command: 'test'
     workingDirectory: 'src/FancyToDo.UnitTests'
   
+- task: Delay@1
+  inputs:
+    delayForMinutes: '2'
+
 - task: DotNetCoreCLI@2
   displayName: "Run Functional Tests"
   inputs:
