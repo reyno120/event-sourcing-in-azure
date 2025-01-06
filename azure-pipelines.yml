@@ -68,6 +68,13 @@ steps:
     targetType: 'inline'
     script: dotnet workload install aspire
 
+- task: FileTransform@2
+  displayName: Replace values appsettings
+  inputs:
+    folderPath: 'src'
+    enableXmlTransform: false
+    xmlTransformationRules: 
+    jsonTargetFiles: '**/appsettings.json'
 
 - task: 'DotNetCoreCLI@2'
   displayName: 'Restore NuGet packages'
@@ -82,14 +89,6 @@ steps:
     projects: 'src/FancyToDo.Functions/FancyToDo.Functions.csproj'
     arguments: --output $(System.DefaultWorkingDirectory)/publish_output --configuration $(buildConfiguration)
   
-
-- task: FileTransform@2
-  displayName: Replace values Functional Tests
-  inputs:
-    folderPath: 'src'
-    enableXmlTransform: false
-    xmlTransformationRules: 
-    jsonTargetFiles: '**/appsettings.json'
     
 - task: ArchiveFiles@2
   displayName: 'Archive files'
