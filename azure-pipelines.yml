@@ -117,7 +117,8 @@ jobs:
         package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
         deploymentMethod: 'zipDeploy'
   
-  - job: Run_Integration_Tests
+  - job: Run_Service_Tests
+    dependsOn: Build_Deploy_App
     steps:
     - task: Bash@3
       displayName: Install .NET Aspire workload
@@ -133,28 +134,30 @@ jobs:
 
 #----------------------------------------------------------------------
 
-  - job: Destroy_Resources
-    steps:
-    - task: TerraformInstaller@1
-      displayName: Install Terraform
-      inputs:
-        terraformVersion: 'latest'
+  # - job: Destroy_Resources
+  #   dependsOn: Run_Service_Tests
+  #   steps:
+  #   - task: TerraformInstaller@1
+  #     displayName: Install Terraform
+  #     inputs:
+  #       terraformVersion: 'latest'
 
-    - task: TerraformTaskV4@4
-      displayName: Terraform init
-      inputs:
-        provider: 'azurerm'
-        command: 'init'
-        backendServiceArm: 'azrm'
-        backendAzureRmResourceGroupName: 'automated-testing'
-        backendAzureRmStorageAccountName: 'jmreynolds03storage'
-        backendAzureRmContainerName: 'terraform-state'
-        backendAzureRmKey: 'terraform.tfstate'
-        workingDirectory: terraform
+  #   - task: TerraformTaskV4@4
+  #     displayName: Terraform init
+  #     inputs:
+  #       provider: 'azurerm'
+  #       command: 'init'
+  #       backendServiceArm: 'azrm'
+  #       backendAzureRmResourceGroupName: 'automated-testing'
+  #       backendAzureRmStorageAccountName: 'jmreynolds03storage'
+  #       backendAzureRmContainerName: 'terraform-state'
+  #       backendAzureRmKey: 'terraform.tfstate'
+  #       workingDirectory: terraform
 
-    - task: TerraformTaskV4@4
-      displayName: Terraform Destroy
-      inputs:
-        provider: 'azurerm'
-        command: 'destroy'
-        environmentServiceNameAzureRM: 'azrm-all'
+  #   - task: TerraformTaskV4@4
+  #     displayName: Terraform Destroy
+  #     inputs:
+  #       provider: 'azurerm'
+  #       command: 'destroy'
+  #       commandOptions: -var-file=".test.tfvars" -var="functionApp_name=$(functionApp-name)" -var="client_secret=$(client_secret)" -auto-approve
+  #       environmentServiceNameAzureRM: 'azrm-all'
