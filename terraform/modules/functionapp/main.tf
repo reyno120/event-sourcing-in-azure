@@ -4,6 +4,7 @@ variable "storage_account" {}
 variable "service_plan" {}
 variable "database_name" {}
 variable "cosmosdb_connectionstring" {}
+variable "app_insights_key" {}
 
 resource "azurerm_windows_function_app" "functionApp" {
   name                = var.functionApp_name
@@ -18,6 +19,7 @@ resource "azurerm_windows_function_app" "functionApp" {
     ContainerName = "ToDoListEventStream"
     CosmosDBConnectionString = var.cosmosdb_connectionstring
     FUNCTIONS_WORKER_RUNTIME: "dotnet-isolated"
+    APPINSIGHTS_INSTRUMENTATIONKEY = var.app_insights_key
   }
   connection_string {
     name  = "CosmosDBConnectionString"

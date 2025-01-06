@@ -26,3 +26,7 @@ variable "client_secret" {
   type      = string
   sensitive = true
 }
+
+variable "app_insights_name" {
+  type = string
+}

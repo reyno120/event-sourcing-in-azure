@@ -44,6 +44,13 @@ resource "azurerm_service_plan" "service_plan" {
   sku_name            = "Y1"
 }
 
+resource "azurerm_application_insights" "app_insights" {
+  name                = var.app_insights_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  application_type    = "web"
+}
+
 module "functionApp" {
   source = "./modules/functionapp"
 
@@ -53,6 +60,7 @@ module "functionApp" {
   service_plan              = azurerm_service_plan.service_plan
   database_name             = var.database_name
   cosmosdb_connectionstring = azurerm_cosmosdb_account.account.primary_sql_connection_string
+  app_insights_key          = azurerm_application_insights.app_insights.instrumentation_key
 }
 
 module "database" {
