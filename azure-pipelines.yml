@@ -105,6 +105,15 @@ steps:
 #     publishWebProjects: false
 #     modifyOutputPath: false
 #     zipAfterPublish: false
+
+- task: FileTransform@2
+  displayName: Replace values Functional Tests
+  inputs:
+    folderPath: 'src'
+    enableXmlTransform: false
+    xmlTransformationRules: 
+    jsonTargetFiles: '**/appsettings.json'
+    
 - task: ArchiveFiles@2
   displayName: 'Archive files'
   inputs:
@@ -159,21 +168,13 @@ steps:
 #     command: 'test'
 #     workingDirectory: 'src/FancyToDo.IntegrationTests'
 
-- task: FileTransform@2
-  displayName: Replace values Functional Tests
-  inputs:
-    folderPath: 'src'
-    enableXmlTransform: false
-    xmlTransformationRules: 
-    jsonTargetFiles: '**/appsettings.json'
-  
 # - task: FileTransform@2
-#   displayName: Replace values in Function App
+#   displayName: Replace values Functional Tests
 #   inputs:
-#     folderPath: 'src/FancyToDo.Functions'
+#     folderPath: 'src'
 #     enableXmlTransform: false
 #     xmlTransformationRules: 
-#     jsonTargetFiles: 'appsettings.json'
+#     jsonTargetFiles: '**/appsettings.json'
 
 - task: DotNetCoreCLI@2
   displayName: "Run Functional Tests"
