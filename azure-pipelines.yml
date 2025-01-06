@@ -116,7 +116,7 @@ steps:
   displayName: "Run Unit Tests"
   inputs:
     command: 'test'
-    workingDirectory: 'src/FancyToDo.Units'
+    workingDirectory: 'src/FancyToDo.UnitTests'
   
 - task: DotNetCoreCLI@2
   displayName: "Run Functional Tests"
