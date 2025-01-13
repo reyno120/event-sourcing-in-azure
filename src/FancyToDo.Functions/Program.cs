@@ -1,3 +1,6 @@
+using System.Diagnostics;
+using FancyToDo.Core.ToDoList.DomainEvents;
+using FancyToDo.Core.ToDoList.Entities.ToDoItem;
 using FancyToDo.Infrastructure.Configuration;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Functions.Worker;
@@ -6,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using SharedKernel.EventSourcing.EventStore;
+using System.Text.Json;
 
 
 // Using IHostApplicationBuilder
@@ -26,7 +30,7 @@ builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
         {
             PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase
         }
-    };
+    }; 
     
     return new CosmosClient(
         builder.Configuration.GetConnectionString("CosmosDBConnectionString"), 
@@ -45,6 +49,36 @@ builder.Services.AddMediatR(cfg =>
 
 
 var host = builder.Build();
+
+
+// TODO: Temporary
+// var db = await host.Services.GetRequiredService<CosmosClient>().CreateDatabaseIfNotExistsAsync("fancy-db");
+// var eventStream = await db.Database.DefineContainer("ToDoListEventStream", "/streamId")
+//     .WithUniqueKey()
+//     .Path("/version")
+//     .Attach()
+//     .CreateIfNotExistsAsync();
+//         
+// var projection = await db.Database.DefineContainer("ToDoLists", "/id")
+//     .CreateIfNotExistsAsync();
+//
+// /* Seed EventStore */
+// var toDoListId = Guid.Parse("381cafbf-9126-43ff-bbd4-eda0eef17e97");
+//       
+// EventStream stream = new
+// (
+//     streamId: toDoListId,
+//     eventType: typeof(ToDoListCreatedEvent),
+//     version: 1,
+//     payload: JsonSerializer.Serialize(new ToDoListCreatedEvent(toDoListId, "Fancy ToDo List"))
+// );
+// await eventStream.Container.UpsertItemAsync(stream);
+//       
+// await projection.Container.UpsertItemAsync(new
+//     { id = toDoListId.ToString(), name = "Fancy ToDo List", items = new List<ToDoItem>() });
+
+
+
 
 await host.RunAsync();
 

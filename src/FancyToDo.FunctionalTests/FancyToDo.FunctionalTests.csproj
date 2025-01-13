@@ -6,6 +6,7 @@
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
@@ -26,6 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\AppHost.ServiceTesting\AppHost.ServiceTesting.csproj" />
       <ProjectReference Include="..\AppHost\AppHost.csproj" />
       <ProjectReference Include="..\FancyToDo.API\FancyToDo.API.csproj" />
       <ProjectReference Include="..\FancyToDo.Functions\FancyToDo.Functions.csproj" />

@@ -9,6 +9,4 @@ builder.AddProject<Projects.FancyToDo_API>("fancy-api")
     .WithReference(connectionString)
     .WithReference(db);
 
-// builder.AddProject<Projects.FancyToDo_Functions>("fancytodo-functions");
-
 builder.Build().Run();

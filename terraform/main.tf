@@ -8,6 +8,7 @@ resource "azurerm_cosmosdb_account" "account" {
   resource_group_name = azurerm_resource_group.example.name
   offer_type          = "Standard"
   location            = var.location
+  free_tier_enabled   = true
   tags = {
     "defaultExperience" = "Core (SQL)"
   }
