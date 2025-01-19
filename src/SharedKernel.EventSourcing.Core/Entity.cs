@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
 
-namespace SharedKernel;
+namespace SharedKernel.EventSourcing.Core;
 
 public abstract class Entity
 {

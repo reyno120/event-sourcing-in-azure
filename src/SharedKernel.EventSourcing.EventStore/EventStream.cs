@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace SharedKernel;
+namespace SharedKernel.EventSourcing.EventStore;
 
 public class EventStream(Guid streamId, Type eventType, int version, string payload)
 {

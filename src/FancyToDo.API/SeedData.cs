@@ -1,10 +1,11 @@
 ﻿using System.Text.Json;
+using FancyToDo.Core.ToDoList;
 using FancyToDo.Core.ToDoList.DomainEvents;
 using FancyToDo.Core.ToDoList.Entities.ToDoItem;
 using FancyToDo.Infrastructure.Configuration;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Options;
-using SharedKernel;
+using SharedKernel.EventSourcing.EventStore;
 
 namespace FancyToDo.API;
 
@@ -12,16 +13,18 @@ public static class SeedData
 {
    public static async Task SeedTestData(this WebApplication app)
    {
-      var eventStoreOptions = app.Services.GetRequiredService<IOptions<EventStoreOptions>>();
+      var eventStoreOptionsSnapshot = app.Services.GetRequiredService<IOptionsMonitor<EventStoreOptions>>();
+      var eventStoreOptions = eventStoreOptionsSnapshot.Get($"{nameof(ToDoList)}EventStore");
+      
       var projectionOptions = app.Services.GetRequiredService<IOptions<ProjectionOptions>>();
       
       var cosmosClient = app.Services.GetRequiredService<CosmosClient>();
       
       // Create database if it doesn't already exist
-      var db = await cosmosClient.CreateDatabaseIfNotExistsAsync(eventStoreOptions.Value.DatabaseName);
+      var db = await cosmosClient.CreateDatabaseIfNotExistsAsync(eventStoreOptions.DatabaseName);
       
       // Create container if it doesn't already exist
-      var container = await db.Database.DefineContainer(eventStoreOptions.Value.ContainerName, "/streamId")
+      var container = await db.Database.DefineContainer(eventStoreOptions.ContainerName, "/streamId")
          .WithUniqueKey()
          .Path("/version")
          .Attach()

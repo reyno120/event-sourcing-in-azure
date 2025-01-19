@@ -1,4 +1,4 @@
-﻿using SharedKernel;
+using SharedKernel.EventSourcing.Core;
 
 namespace FancyToDo.Core.ToDoList.DomainEvents;
 

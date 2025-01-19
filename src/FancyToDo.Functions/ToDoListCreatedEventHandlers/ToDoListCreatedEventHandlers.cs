@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using FancyToDo.Core.ToDoList.DomainEvents;
-using FancyToDo.Projections;
 using MediatR;
 using Microsoft.Azure.Cosmos;
 

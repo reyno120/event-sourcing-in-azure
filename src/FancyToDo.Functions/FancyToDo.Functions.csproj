@@ -34,7 +34,8 @@
     <ProjectReference Include="..\FancyToDo.Core\FancyToDo.Core.csproj" />
     <ProjectReference Include="..\FancyToDo.Infrastructure\FancyToDo.Infrastructure.csproj" />
     <ProjectReference Include="..\FancyToDo.Projections\FancyToDo.Projections.csproj" />
-    <ProjectReference Include="..\SharedKernel\SharedKernel.csproj" />
+    <ProjectReference Include="..\SharedKernel.EventSourcing.Core\SharedKernel.EventSourcing.Core.csproj" />
+    <ProjectReference Include="..\SharedKernel.EventSourcing.EventStore\SharedKernel.EventSourcing.EventStore.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="appsettings.json" />

@@ -1,3 +1,4 @@
+using FancyToDo.Core.ToDoList;
 using FancyToDo.Infrastructure.Configuration;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Functions.Worker;
@@ -5,6 +6,7 @@ using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using SharedKernel.EventSourcing.EventStore;
 
 
 // Using IHostApplicationBuilder
@@ -34,9 +36,8 @@ builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
 });
 
 
-builder.Services.Configure<EventStoreOptions>(builder.Configuration.GetSection(EventStoreOptions.EventStore));
+builder.ConfigureEventStore();
 builder.Services.Configure<ProjectionOptions>(builder.Configuration.GetSection(ProjectionOptions.Projection));
-
 
 builder.Services.AddMediatR(cfg =>
 {

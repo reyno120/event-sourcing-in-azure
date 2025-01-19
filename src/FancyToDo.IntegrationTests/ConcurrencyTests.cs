@@ -1,8 +1,7 @@
 using System.Text.Json;
-using FancyToDo.Core.ToDoList;
 using FancyToDo.Core.ToDoList.DomainEvents;
 using Microsoft.Azure.Cosmos;
-using SharedKernel;
+using SharedKernel.EventSourcing.EventStore;
 
 namespace FancyToDo.IntegrationTests.Tests
 {
@@ -29,7 +28,7 @@ namespace FancyToDo.IntegrationTests.Tests
 			
 
 			// Act
-			var toDoList = await fixture.EventStore.Load<ToDoList>(_toDoListId);
+			var toDoList = await fixture.EventStore.Load(_toDoListId);
 			
 			stream = new EventStream(
 				streamId: _toDoListId,
@@ -66,7 +65,7 @@ namespace FancyToDo.IntegrationTests.Tests
 			
 
 			// Act
-			var toDoList = await fixture.EventStore.Load<ToDoList>(_toDoListId);
+			var toDoList = await fixture.EventStore.Load(_toDoListId);
 			
 			stream = new EventStream(
 				streamId: _toDoListId,

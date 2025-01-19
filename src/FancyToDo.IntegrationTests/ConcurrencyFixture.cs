@@ -1,9 +1,10 @@
-﻿using FancyToDo.Infrastructure;
-using FancyToDo.Infrastructure.Configuration;
+﻿using FancyToDo.Core.ToDoList;
+using FancyToDo.Infrastructure;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
 using Moq;
+using SharedKernel.EventSourcing.EventStore;
 
 namespace FancyToDo.IntegrationTests;
 
@@ -11,7 +12,7 @@ public class ConcurrencyFixture : IDisposable
 {
     private readonly EventStoreOptions _eventStoreOptions;
     private readonly CosmosClient _cosmosClient;
-    public readonly EventStore EventStore;
+    public readonly EventStore<ToDoList> EventStore;
     public Container EventStoreContainer { get; private set; }
     
     public ConcurrencyFixture()
@@ -19,7 +20,7 @@ public class ConcurrencyFixture : IDisposable
         // Configure
         var config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
         _eventStoreOptions = new EventStoreOptions();
-        config.GetSection(EventStoreOptions.EventStore).Bind(_eventStoreOptions);
+        config.GetSection("EventStores").GetSection("ToDoListEventStore").Bind(_eventStoreOptions);
 
         
         // Initialize CosmosDB Emulator
@@ -46,11 +47,10 @@ public class ConcurrencyFixture : IDisposable
         
         
         // Initialize EventStore
-        var mockEventStoreOptions = new Mock<IOptions<EventStoreOptions>>();
-        mockEventStoreOptions.SetupGet(s => s.Value)
-                .Returns(_eventStoreOptions);
-        
-        EventStore = new EventStore(_cosmosClient, mockEventStoreOptions.Object);
+        // Switch to ITestOutputHelper using a factory
+        var mockLogger = new Mock<ILogger<EventStore<ToDoList>>>();
+        // mockLogger.Setup(s => s.LogDebug(It.isAN));
+        EventStore = new EventStore<ToDoList>(_cosmosClient, _eventStoreOptions, mockLogger.Object);
     }
 
     private async Task CreateContainer(Database db)

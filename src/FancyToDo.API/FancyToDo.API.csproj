@@ -17,6 +17,7 @@
     <ItemGroup>
       <ProjectReference Include="..\FancyToDo.Core\FancyToDo.Core.csproj" />
       <ProjectReference Include="..\FancyToDo.Infrastructure\FancyToDo.Infrastructure.csproj" />
+      <ProjectReference Include="..\SharedKernel.EventSourcing.EventStore\SharedKernel.EventSourcing.EventStore.csproj" />
     </ItemGroup>
 
 </Project>

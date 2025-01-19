@@ -1,18 +1,21 @@
 ﻿using Ardalis.ApiEndpoints;
-using FancyToDo.Core;
 using FancyToDo.Core.ToDoList;
 using Microsoft.AspNetCore.Mvc;
+using SharedKernel.EventSourcing.Core;
+using SharedKernel.EventSourcing.EventStore;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace FancyToDo.API.ToDoItemEndpoints;
 
 public record CreateToDoItemRequest(Guid ListId, string Task);
 
-public class ToDoItemsCreateEndpoint(IEventStore eventStore) : EndpointBaseAsync
+public class ToDoItemsCreateEndpoint(IEventStore<EventStore<ToDoList>> eventStore) : EndpointBaseAsync
     .WithRequest<CreateToDoItemRequest>
     .WithResult<IActionResult>
 {
-    [HttpPost("/todoitems")]
+    private readonly EventStore<ToDoList> _eventStore = eventStore.Store;
+    
+    [HttpPost(Resources.ToDoItemRoute)]
     [SwaggerOperation(
         Summary = "Creates a ToDo Item",
         Description = "Creates a ToDo Item",
@@ -22,7 +25,7 @@ public class ToDoItemsCreateEndpoint(IEventStore eventStore) : EndpointBaseAsync
     public override async Task<IActionResult> HandleAsync(CreateToDoItemRequest request, CancellationToken token)
     {
         // Load Aggregate
-        var toDoList = await eventStore.Load<ToDoList>(request.ListId);
+        var toDoList = await _eventStore.Load(request.ListId);
         if (toDoList is null)
             throw new InvalidOperationException("ListId is Invalid");
         
@@ -30,7 +33,7 @@ public class ToDoItemsCreateEndpoint(IEventStore eventStore) : EndpointBaseAsync
         toDoList.AddToDo(request.Task);
         
         // Append Events that were raised during operations to Event Store
-        await eventStore.Append(toDoList);
+        await _eventStore.Append(toDoList);
         
         return NoContent(); 
     }

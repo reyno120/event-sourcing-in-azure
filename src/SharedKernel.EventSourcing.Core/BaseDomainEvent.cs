@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace SharedKernel;
+namespace SharedKernel.EventSourcing.Core;
 
 public abstract record BaseDomainEvent : INotification
 {

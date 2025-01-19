@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace SharedKernel;
+namespace SharedKernel.EventSourcing.Core;
 
 public abstract class AggregateRoot : Entity
 {
