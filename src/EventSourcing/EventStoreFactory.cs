@@ -1,28 +1,29 @@
-﻿using Microsoft.Azure.Cosmos;
+﻿using EventSourcing.Core;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace EventSourcing;
 
-internal sealed class EventStoreFactory<TEventStore>(CosmosClient cosmosClient, 
+internal sealed class EventStoreFactory<T>(CosmosClient cosmosClient, 
     IOptionsMonitor<EventStoreOptions> namedOptionsAccessor, ILoggerFactory loggerFactory)
-    : IEventStoreFactory<TEventStore> where TEventStore : class
-{
-    public TEventStore Create()
+    : IEventStoreFactory<T> 
+    public IEventStore<T> Create()
     {
-        // TODO: Modify this if moving to separate repo
-        var logger = loggerFactory.CreateLogger("EventStore"); 
+        // TODO: Is this how we want to categorize logging??
+        var logger = loggerFactory.CreateLogger($"{typeof(T)}.EventStore");
+
+        // TODO Throw exception and test if doens't exist
+        EventStoreOptions eventStoreOptions = namedOptionsAccessor.Get($"{aggregateType.Name}EventStore");
         
-        var aggregateType = typeof(TEventStore).GetGenericArguments()[0];
-        
-        return ((TEventStore)Activator.CreateInstance(typeof(TEventStore),
-            cosmosClient, namedOptionsAccessor.Get($"{aggregateType.Name}EventStore"), logger)!)!;
-        // TODO: Throw exception if accessor returns nothing?
+        var aggregateType = typeof(T).GetGenericArguments()[0];
+
+        return new EventStore<T>(cosmosClient, eventStoreOptions, logger);
     }
 }
 
-public interface IEventStoreFactory<TEventStore>
-    where TEventStore : class
+public interface IEventStoreFactory<T>
+    where T : AggregateRoot 
 {
-    TEventStore Create();
+    IEventStore<T> Create();
 }

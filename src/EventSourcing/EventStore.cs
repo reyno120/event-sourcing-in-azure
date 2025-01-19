@@ -11,7 +11,7 @@ namespace EventSourcing;
 // https://learn.microsoft.com/en-us/dotnet/core/extensions/logging-library-authors
 
 public partial class EventStore<T>(CosmosClient cosmosClient, 
-    EventStoreOptions options, ILogger logger)
+    EventStoreOptions options, ILogger logger) : IEventStore<T>
     where T : AggregateRoot
 {
     private readonly Container _container = cosmosClient

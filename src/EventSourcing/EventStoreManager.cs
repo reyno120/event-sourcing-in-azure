@@ -2,16 +2,15 @@
 
 namespace EventSourcing;
 
-internal sealed class EventStoreManager<TEventStore>(IEventStoreFactory<TEventStore> factory) 
-    : IEventStore<TEventStore> where TEventStore : class 
+internal sealed class EventStoreManager<T>(IEventStoreFactory<T> factory) where T : AggregateRoot 
 {
     private volatile object? _syncObj;
-    private volatile TEventStore? _store;
-    public TEventStore Store
+    private volatile IEventStore<T>? _store;
+    public IEventStore<T> Store
     {
         get
         {
-            if (_store is TEventStore store)
+            if (_store is EventStore<T> store)
                 return store;
             
             // TODO: Research more

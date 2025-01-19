@@ -2,5 +2,6 @@
 
 public interface IEventStore<T>
 {
-    T Store { get; }
+    Task Append(T aggregateRoot);
+    Task<T?> Load(Guid id);
 }
