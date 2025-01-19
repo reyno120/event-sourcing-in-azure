@@ -2,7 +2,7 @@ using FancyToDo.Core.ToDoList;
 using FancyToDo.Core.ToDoList.DomainEvents;
 using FancyToDo.Core.ToDoList.Entities.ToDoItem.DomainEvents;
 
-namespace FancyToDo.UnitTests;
+namespace EventSourcing.Core.UnitTests;
 
 public class ToDoListsTests
 {

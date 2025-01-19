@@ -3,19 +3,36 @@ using EventSourcing.Core;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Extensions.Logging;
-
+using Microsoft.Extensions.Options;
 
 namespace EventSourcing;
 
 // Logging for Library Authors
 // https://learn.microsoft.com/en-us/dotnet/core/extensions/logging-library-authors
 
-public partial class EventStore<T>(CosmosClient cosmosClient, 
-    EventStoreOptions options, ILogger logger)
+public partial class EventStore<T>
     where T : AggregateRoot
 {
-    private readonly Container _container = cosmosClient
-        .GetContainer(options.DatabaseName, options.ContainerName);
+    private readonly Container _container;
+    private readonly ILogger _logger;
+
+    // TODO: Future Enhancement - move this to a factory (see enhancement-eventstorefactory branch)
+    public EventStore(CosmosClient cosmosClient, 
+        IOptionsMonitor<EventStoreOptions> namedOptionsAccessor, ILoggerFactory loggerFactory)
+    {
+        // TODO: Test exception
+        EventStoreOptions _options = namedOptionsAccessor.Get($"{typeof(T).Name}EventStore") ?? 
+                                     throw new ArgumentException($"{typeof(T).Name}EventStore configuration is missing."); 
+        
+        // TODO throw exception if container/database doesn't exist and test
+        _container = cosmosClient
+            .GetContainer(_options.DatabaseName, _options.ContainerName);
+
+        // TODO: Is this how we want to categorize the logging??
+        _logger = loggerFactory.CreateLogger($"EventStore.{typeof(T).Name}"); 
+    }
+    
+
 
 
     public async Task Append(T aggregateRoot)
@@ -23,7 +40,7 @@ public partial class EventStore<T>(CosmosClient cosmosClient,
         var domainEvents = aggregateRoot.CollectDomainEvents();
         // TODO: https://learn.microsoft.com/en-us/dotnet/core/extensions/high-performance-logging
         // Use action delegate so JsonSerializer.Serialize & typeof(T) isn't called when the LogLevel isn't set to Debug
-        LogAppendRequest(logger, typeof(T).Name, aggregateRoot.Id, 
+        LogAppendRequest(_logger, typeof(T).Name, aggregateRoot.Id, 
             domainEvents.Select(s => JsonSerializer.Serialize(s, s.GetType())));
         
         var batch = _container.CreateTransactionalBatch(new PartitionKey(aggregateRoot.Id.ToString()));
@@ -48,7 +65,7 @@ public partial class EventStore<T>(CosmosClient cosmosClient,
         if (!response.IsSuccessStatusCode)
         {
             // TODO: CorrelationId??
-            LogAppendError(logger, typeof(T).Name, aggregateRoot.Id,
+            LogAppendError(_logger, typeof(T).Name, aggregateRoot.Id,
                 domainEvents.Select(s => JsonSerializer.Serialize(s, s.GetType()))); 
             throw new CosmosException(response.ErrorMessage, 
                 response.StatusCode, 0, response.ActivityId, response.RequestCharge);
@@ -59,6 +76,7 @@ public partial class EventStore<T>(CosmosClient cosmosClient,
         aggregateRoot.ClearDomainEvents();
     }
     
+    // TODO: Make static and test
     [LoggerMessage(Level = LogLevel.Debug, 
         Message = "Appending the following {type} events with Id: {id} \n {@events}")]
     partial void LogAppendRequest(ILogger logger, string type, Guid id, IEnumerable<string> @events);
@@ -69,13 +87,13 @@ public partial class EventStore<T>(CosmosClient cosmosClient,
     partial void LogAppendError(ILogger logger, string type, Guid id, IEnumerable<string> @events);
     
     
-    
+    //TODO: Public tryload -> returns null. Load throws exception
     public async Task<T?> Load(Guid id) 
     {
-        LogLoadRequest(logger, typeof(T).Name, id);
+        LogLoadRequest(_logger, typeof(T).Name, id);
         
         var events = await LoadEvents(id);
-        LogLoadedEvents(logger, typeof(T).Name, id, JsonSerializer.Serialize(events));
+        LogLoadedEvents(_logger, typeof(T).Name, id, JsonSerializer.Serialize(events));
         
         if (events.Count == 0) 
             return default;     // TODO: Throw exception instead of return default 

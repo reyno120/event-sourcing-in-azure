@@ -7,14 +7,15 @@ namespace EventSourcing;
 public static class ConfigureEventStoreExtensions
 {
     // TODO: Add annotations
+    // TODO: Add optional parameter to define configuration section
     public static IHostApplicationBuilder ConfigureEventStore(this IHostApplicationBuilder builder)
     {
         // TODO: Make this an Azure CosmosDB specific extension and verify
         // container from config is setup correctly with correct paritionId & uniquekey?
 
-        // TODO: Should this be scoped instead of singleton?
-        builder.Services.AddSingleton(typeof(IEventStore<>), typeof(EventStoreManager<>));
-        builder.Services.AddTransient(typeof(IEventStoreFactory<>), typeof(EventStoreFactory<>));
+        
+        // Is there a test out there for memory leaks??
+        builder.Services.AddTransient(typeof(IEventStore<>), typeof(EventStore<>));
         
         foreach (var section in builder.Configuration.GetSection("EventStores").GetChildren())
         {

@@ -3,9 +3,11 @@ using FancyToDo.Core.ToDoList;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
+using ILogger = Castle.Core.Logging.ILogger;
 
-namespace FancyToDo.IntegrationTests;
+namespace EventSourcing.IntegrationTests;
 
 public class ConcurrencyFixture : IDisposable 
 {
@@ -47,9 +49,14 @@ public class ConcurrencyFixture : IDisposable
         
         // Initialize EventStore
         // Switch to ITestOutputHelper using a factory
-        var mockLogger = new Mock<ILogger<EventStore<ToDoList>>>();
-        // mockLogger.Setup(s => s.LogDebug(It.isAN));
-        EventStore = new EventStore<ToDoList>(_cosmosClient, _eventStoreOptions, mockLogger.Object);
+        var mockOptions = new Mock<IOptionsMonitor<EventStoreOptions>>();
+        mockOptions.Setup(s => s.Get(It.IsAny<string>())).Returns(_eventStoreOptions);
+
+        // TODO: Better way to mock logging
+        var mockLoggerFactory = new Mock<ILoggerFactory>();
+        var mockLogger = new Mock<ILogger<ToDoList>>();
+        mockLoggerFactory.Setup(s => s.CreateLogger(It.IsAny<string>())).Returns(mockLogger.Object);
+        EventStore = new EventStore<ToDoList>(_cosmosClient, mockOptions.Object, mockLoggerFactory.Object);
     }
 
     private async Task CreateContainer(Database db)

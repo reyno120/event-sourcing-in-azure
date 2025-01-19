@@ -9,12 +9,10 @@ namespace FancyToDo.API.ToDoItemEndpoints;
 
 public record CreateToDoItemRequest(Guid ListId, string Task);
 
-public class ToDoItemsCreateEndpoint(IEventStore<EventStore<ToDoList>> eventStore) : EndpointBaseAsync
+public class ToDoItemsCreateEndpoint(IEventStore<ToDoList> eventStore) : EndpointBaseAsync
     .WithRequest<CreateToDoItemRequest>
     .WithResult<IActionResult>
 {
-    private readonly EventStore<ToDoList> _eventStore = eventStore.Store;
-    
     [HttpPost(Resources.ToDoItemRoute)]
     [SwaggerOperation(
         Summary = "Creates a ToDo Item",
@@ -25,7 +23,7 @@ public class ToDoItemsCreateEndpoint(IEventStore<EventStore<ToDoList>> eventStor
     public override async Task<IActionResult> HandleAsync(CreateToDoItemRequest request, CancellationToken token)
     {
         // Load Aggregate
-        var toDoList = await _eventStore.Load(request.ListId);
+        var toDoList = await eventStore.Load(request.ListId);
         if (toDoList is null)
             throw new InvalidOperationException("ListId is Invalid");
         
@@ -33,7 +31,7 @@ public class ToDoItemsCreateEndpoint(IEventStore<EventStore<ToDoList>> eventStor
         toDoList.AddToDo(request.Task);
         
         // Append Events that were raised during operations to Event Store
-        await _eventStore.Append(toDoList);
+        await eventStore.Append(toDoList);
         
         return NoContent(); 
     }

@@ -1,12 +1,13 @@
 using System.Text.Json;
-using EventSourcing;
 using FancyToDo.Core.ToDoList.DomainEvents;
 using Microsoft.Azure.Cosmos;
 
-namespace FancyToDo.IntegrationTests.Tests
+namespace EventSourcing.IntegrationTests
 {
 	// Class Fixtures https://xunit.net/docs/shared-context
 	// Tests WITHIN Class will not run in parallel https://xunit.net/docs/running-tests-in-parallel.html
+	
+	// TODO: Cleanup/move fixture to this file. Add more integration tests
 	public class ConcurrencyTests(ConcurrencyFixture fixture) : IClassFixture<ConcurrencyFixture>, IDisposable
 	{
 		private readonly Guid _toDoListId = Guid.Parse("381cafbf-9126-43ff-bbd4-eda0eef17e97"); 
