@@ -21,7 +21,8 @@ public static class ConfigurationExtensions
         IConfigurationSection? configurations = null)
     {
         // TODO: Is there a test out there for memory leaks??
-        builder.Services.AddSingleton(typeof(IEventStore<>), typeof(EventStore<>));
+        builder.Services.AddTransient(typeof(IEventStoreFactory<>), typeof(EventStoreFactory<>));
+        builder.Services.AddSingleton(typeof(IEventStore<>), typeof(EventStoreManager<>));
         
         
         var eventStoreConfigurations = configurations?.GetChildren() ?? 
@@ -43,7 +44,8 @@ public static class ConfigurationExtensions
 
     public static IHost VerifyEventStoreConfigurations(this IHost app)
     {
-        // TODO: Turn this into a health check??
+        // TODO: You can't change the partition key or unique key policy of a container once it's created
+        // might be helpful to have a verification at program build to catch issues quicker instead of at runtime
         return app;
     }
 }

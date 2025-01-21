@@ -18,9 +18,9 @@ builder.ConfigureEventStores();
 
 var app = builder.Build();
 
-app.UseLoggingMiddleware();
+// app.UseLoggingMiddleware();
 
-await app.SeedTestData();
+// await app.SeedTestData();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

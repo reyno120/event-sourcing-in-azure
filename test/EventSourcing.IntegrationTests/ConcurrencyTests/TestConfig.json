@@ -1,6 +1,6 @@
 ﻿{
   "EventStores": {
-    "ToDoListEventStore": {
+    "ToDoList": {
       "DatabaseName": "test-db",
       "ContainerName": "ToDoListEventStream"
     }

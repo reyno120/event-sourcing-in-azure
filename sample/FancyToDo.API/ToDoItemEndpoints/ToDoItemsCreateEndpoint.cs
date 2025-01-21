@@ -24,8 +24,6 @@ public class ToDoItemsCreateEndpoint(IEventStore<ToDoList> eventStore) : Endpoin
     {
         // Load Aggregate
         var toDoList = await eventStore.Load(request.ListId);
-        if (toDoList is null)
-            throw new InvalidOperationException("ListId is Invalid");
         
         // Add new ToDoItem
         toDoList.AddToDo(request.Task);

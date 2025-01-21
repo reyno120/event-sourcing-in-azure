@@ -1,27 +1,25 @@
-﻿using EventSourcing;
-using FancyToDo.Core.ToDoList;
+﻿using FancyToDo.Core.ToDoList;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
-using ILogger = Castle.Core.Logging.ILogger;
 
-namespace EventSourcing.IntegrationTests;
+namespace EventSourcing.IntegrationTests.ConcurrencyTests;
 
 public class ConcurrencyFixture : IDisposable 
 {
     private readonly EventStoreOptions _eventStoreOptions;
     private readonly CosmosClient _cosmosClient;
-    public readonly EventStore<ToDoList> EventStore;
+    internal readonly EventStore<ToDoList> EventStore;
     public Container EventStoreContainer { get; private set; }
     
     public ConcurrencyFixture()
     {
         // Configure
-        var config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+        var config = new ConfigurationBuilder().AddJsonFile("ConcurrencyTests/TestConfig.json").Build();
         _eventStoreOptions = new EventStoreOptions();
-        config.GetSection("EventStores").GetSection("ToDoListEventStore").Bind(_eventStoreOptions);
+        config.GetSection("EventStores").GetSection("ToDoList").Bind(_eventStoreOptions);
 
         
         // Initialize CosmosDB Emulator
@@ -38,7 +36,6 @@ public class ConcurrencyFixture : IDisposable
             clientOptions: clientOptions 
             );
         
-        
         // Initialize DB & Container
         Task.Run(async () =>
         {
@@ -53,10 +50,8 @@ public class ConcurrencyFixture : IDisposable
         mockOptions.Setup(s => s.Get(It.IsAny<string>())).Returns(_eventStoreOptions);
 
         // TODO: Better way to mock logging
-        var mockLoggerFactory = new Mock<ILoggerFactory>();
         var mockLogger = new Mock<ILogger<ToDoList>>();
-        mockLoggerFactory.Setup(s => s.CreateLogger(It.IsAny<string>())).Returns(mockLogger.Object);
-        EventStore = new EventStore<ToDoList>(_cosmosClient, mockOptions.Object, mockLoggerFactory.Object);
+        EventStore = new EventStore<ToDoList>(this.EventStoreContainer!, mockLogger.Object);
     }
 
     private async Task CreateContainer(Database db)

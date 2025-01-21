@@ -2,7 +2,7 @@ using System.Text.Json;
 using FancyToDo.Core.ToDoList.DomainEvents;
 using Microsoft.Azure.Cosmos;
 
-namespace EventSourcing.IntegrationTests
+namespace EventSourcing.IntegrationTests.ConcurrencyTests
 {
 	// Class Fixtures https://xunit.net/docs/shared-context
 	// Tests WITHIN Class will not run in parallel https://xunit.net/docs/running-tests-in-parallel.html
