@@ -22,9 +22,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\sample\FancyToDo.Core\FancyToDo.Core.csproj" />
-      <ProjectReference Include="..\sample\FancyToDo.Projections\FancyToDo.Projections.csproj" />
-      <ProjectReference Include="..\src\EventSourcing\EventSourcing.csproj" />
+      <ProjectReference Include="..\..\sample\FancyToDo.Core\FancyToDo.Core.csproj" />
+      <ProjectReference Include="..\..\sample\FancyToDo.Projections\FancyToDo.Projections.csproj" />
+      <ProjectReference Include="..\..\src\EventSourcing\EventSourcing.csproj" />
     </ItemGroup>
 
 </Project>

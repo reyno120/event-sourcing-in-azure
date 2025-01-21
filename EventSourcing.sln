@@ -29,7 +29,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcing.Core.UnitTest
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcing.IntegrationTests", "test\EventSourcing.IntegrationTests\EventSourcing.IntegrationTests.csproj", "{3BE07AD8-DE71-4CDC-8AD4-1B53B12A18DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FancyToDo.IntegrationTests", "FancyToDo.IntegrationTests\FancyToDo.IntegrationTests.csproj", "{3DE18A6D-B46A-492F-98BF-DEF5C5A8BE9D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FancyToDo.IntegrationTests", "test\FancyToDo.IntegrationTests\FancyToDo.IntegrationTests.csproj", "{66B4005A-0986-4DEE-89FE-F467967A1E86}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,10 +77,10 @@ Global
 		{3BE07AD8-DE71-4CDC-8AD4-1B53B12A18DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BE07AD8-DE71-4CDC-8AD4-1B53B12A18DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3BE07AD8-DE71-4CDC-8AD4-1B53B12A18DB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3DE18A6D-B46A-492F-98BF-DEF5C5A8BE9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3DE18A6D-B46A-492F-98BF-DEF5C5A8BE9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3DE18A6D-B46A-492F-98BF-DEF5C5A8BE9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3DE18A6D-B46A-492F-98BF-DEF5C5A8BE9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66B4005A-0986-4DEE-89FE-F467967A1E86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66B4005A-0986-4DEE-89FE-F467967A1E86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66B4005A-0986-4DEE-89FE-F467967A1E86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66B4005A-0986-4DEE-89FE-F467967A1E86}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -96,6 +96,6 @@ Global
 		{0FD6AE8C-A993-4EA1-8060-28808B9871F1} = {452CFE8B-D036-496A-B3AD-C83F067EFFC4}
 		{10C3FCE8-6B27-4B53-B8ED-5868BE4B4CB2} = {9EB7FC44-D109-42EC-821F-058998D8CC27}
 		{3BE07AD8-DE71-4CDC-8AD4-1B53B12A18DB} = {9EB7FC44-D109-42EC-821F-058998D8CC27}
-		{3DE18A6D-B46A-492F-98BF-DEF5C5A8BE9D} = {9EB7FC44-D109-42EC-821F-058998D8CC27}
+		{66B4005A-0986-4DEE-89FE-F467967A1E86} = {9EB7FC44-D109-42EC-821F-058998D8CC27}
 	EndGlobalSection
 EndGlobal
