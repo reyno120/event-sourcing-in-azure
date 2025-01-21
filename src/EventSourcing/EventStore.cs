@@ -21,10 +21,11 @@ public partial class EventStore<T>
         IOptionsMonitor<EventStoreOptions> namedOptionsAccessor, ILoggerFactory loggerFactory)
     {
         // TODO: Test exception
-        EventStoreOptions _options = namedOptionsAccessor.Get($"{typeof(T).Name}EventStore") ?? 
+        EventStoreOptions _options = namedOptionsAccessor.Get(typeof(T).Name) ?? 
                                      throw new ArgumentException($"{typeof(T).Name}EventStore configuration is missing."); 
         
         // TODO throw exception if container/database doesn't exist and test
+        // Also check that partition key and unique id are corerct
         _container = cosmosClient
             .GetContainer(_options.DatabaseName, _options.ContainerName);
 

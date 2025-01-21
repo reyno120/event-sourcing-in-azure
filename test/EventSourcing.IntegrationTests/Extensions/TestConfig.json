@@ -1,0 +1,27 @@
+{
+  "EventStores": {
+    "EventStoreA": {
+      "DatabaseName": "DatabaseNameA",
+      "ContainerName": "ContainerNameA"
+    },
+    "EventStoreB": {
+      "DatabaseName": "DatabaseNameB",
+      "ContainerName": "ContainerNameB"
+    }
+  },
+  "OverrideEventStoresSection" : {
+    "EventStoreC" : {
+      "DatabaseName": "DatabaseNameC",
+      "ContainerName": "ContainerNameC"
+    },
+    "EventStoreD" : {
+      "DatabaseName": "DatabaseNameD",
+      "ContainerName": "ContainerNameD"
+    }
+  },
+  "MissingConfigurations": {
+    "EventStoreE" : {
+      "DatabaseName": "DatabaseNameE"
+    }
+  }
+}

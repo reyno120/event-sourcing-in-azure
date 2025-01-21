@@ -35,7 +35,7 @@ builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
 });
 
 
-builder.ConfigureEventStore();
+builder.ConfigureEventStores();
 builder.Services.Configure<ProjectionOptions>(builder.Configuration.GetSection(ProjectionOptions.Projection));
 
 builder.Services.AddMediatR(cfg =>
