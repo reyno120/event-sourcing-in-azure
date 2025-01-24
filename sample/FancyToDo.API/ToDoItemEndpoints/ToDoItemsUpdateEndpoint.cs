@@ -10,10 +10,10 @@ public record UpdateToDoItemRequest
 {
     [FromRoute(Name = "id")] public Guid Id { get; init; }
     [FromRoute(Name = "itemId")] public Guid ItemId { get; init; }
-    [FromBody] public RequestBody Body { get; init; }
+    [FromBody] public UpdateToDoItemRequestBody Body { get; init; } = null!;
 };
 
-public record RequestBody(string Task);
+public record UpdateToDoItemRequestBody(string Task);
 
 public class ToDoItemsUpdateEndpoint(IEventStore<ToDoList> eventStore) : EndpointBaseAsync
     .WithRequest<UpdateToDoItemRequest>

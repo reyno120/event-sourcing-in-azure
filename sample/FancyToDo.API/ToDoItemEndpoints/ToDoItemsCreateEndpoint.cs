@@ -9,8 +9,10 @@ namespace FancyToDo.API.ToDoItemEndpoints;
 public record CreateToDoItemRequest
 {
     [FromRoute(Name = "id")] public Guid Id { get; init; }
-    [FromBody] public string Task { get; init; }
+    [FromBody] public CreateToDoItemRequestBody Body { get; init; } = null!;
 };
+
+public record CreateToDoItemRequestBody(string Task);
 
 public class ToDoItemsCreateEndpoint(IEventStore<ToDoList> eventStore) : EndpointBaseAsync
     .WithRequest<CreateToDoItemRequest>
@@ -29,7 +31,7 @@ public class ToDoItemsCreateEndpoint(IEventStore<ToDoList> eventStore) : Endpoin
         var toDoList = await eventStore.Load(request.Id);
         
         // Add new ToDoItem
-        toDoList.AddToDo(request.Task);
+        toDoList.AddToDo(request.Body.Task);
         
         // Append Events that were raised during operations to Event Store
         await eventStore.Append(toDoList);
