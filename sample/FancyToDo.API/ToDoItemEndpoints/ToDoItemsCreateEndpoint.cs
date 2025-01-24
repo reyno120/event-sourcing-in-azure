@@ -1,5 +1,4 @@
 ﻿using Ardalis.ApiEndpoints;
-using EventSourcing;
 using EventSourcing.Core;
 using FancyToDo.Core.ToDoList;
 using Microsoft.AspNetCore.Mvc;
@@ -7,13 +6,17 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace FancyToDo.API.ToDoItemEndpoints;
 
-public record CreateToDoItemRequest(Guid ListId, string Task);
+public record CreateToDoItemRequest
+{
+    [FromRoute(Name = "id")] public Guid Id { get; init; }
+    [FromBody] public string Task { get; init; }
+};
 
 public class ToDoItemsCreateEndpoint(IEventStore<ToDoList> eventStore) : EndpointBaseAsync
     .WithRequest<CreateToDoItemRequest>
     .WithResult<IActionResult>
 {
-    [HttpPost(Resources.ToDoItemRoute)]
+    [HttpPost("/todolists/{id}/todoitems")]
     [SwaggerOperation(
         Summary = "Creates a ToDo Item",
         Description = "Creates a ToDo Item",
@@ -23,7 +26,7 @@ public class ToDoItemsCreateEndpoint(IEventStore<ToDoList> eventStore) : Endpoin
     public override async Task<IActionResult> HandleAsync(CreateToDoItemRequest request, CancellationToken token)
     {
         // Load Aggregate
-        var toDoList = await eventStore.Load(request.ListId);
+        var toDoList = await eventStore.Load(request.Id);
         
         // Add new ToDoItem
         toDoList.AddToDo(request.Task);

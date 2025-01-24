@@ -6,13 +6,20 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace FancyToDo.API.ToDoItemEndpoints;
 
-public record UpdateToDoItemRequest([FromRoute] Guid Id, [FromRoute] Guid TaskId, [FromBody] string Task, [FromBody] string Status);
+public record UpdateToDoItemRequest
+{
+    [FromRoute(Name = "id")] public Guid Id { get; init; }
+    [FromRoute(Name = "itemId")] public Guid ItemId { get; init; }
+    [FromBody] public RequestBody Body { get; init; }
+};
+
+public record RequestBody(string Task);
 
 public class ToDoItemsUpdateEndpoint(IEventStore<ToDoList> eventStore) : EndpointBaseAsync
     .WithRequest<UpdateToDoItemRequest>
     .WithResult<IActionResult>
 {
-    [HttpPut("/todolists/{id:Guid}/todoitems/{itemId:Guid}")]
+    [HttpPut("/todolists/{id}/todoitems/{itemId}")]
     [SwaggerOperation(
         Summary = "Updates a ToDo Item",
         Description = "Updates a ToDo Item",
@@ -21,11 +28,11 @@ public class ToDoItemsUpdateEndpoint(IEventStore<ToDoList> eventStore) : Endpoin
     ] 
     public override async Task<IActionResult> HandleAsync(UpdateToDoItemRequest request, CancellationToken token)
     {
-        var toDoList = await eventStore.Load(request.Id);
+        var toDoList = await eventStore.TryLoad(request.Id);
         if (toDoList is null)
             throw new InvalidOperationException("ToDoList does not exist.");
         
-        toDoList.RenameTask(request.TaskId, request.Task);
+        toDoList.RenameTask(request.ItemId, request.Body.Task);
         
         return NoContent();
     } 

@@ -13,7 +13,7 @@ public class ToDoListsGetEndpoint(
     .WithoutRequest
     .WithResult<IActionResult>
 {
-    [HttpGet(Resources.ToDoListRoute)]
+    [HttpGet("/todolists")]
     [SwaggerOperation(
         Summary = "Gets all To Do Lists",
         Description = "Gets all To Do Lists",
