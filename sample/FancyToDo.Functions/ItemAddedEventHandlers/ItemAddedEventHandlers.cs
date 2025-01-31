@@ -1,5 +1,5 @@
 ﻿using FancyToDo.Core.ToDoList.DomainEvents;
-using FancyToDo.Infrastructure.Configuration;
+using FancyToDo.Functions.Configuration;
 using FancyToDo.Projections;
 using MediatR;
 using Microsoft.Azure.Cosmos;

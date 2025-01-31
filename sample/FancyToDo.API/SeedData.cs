@@ -1,9 +1,9 @@
 ﻿using System.Text.Json;
 using EventSourcing;
+using FancyToDo.API.Configuration;
 using FancyToDo.Core.ToDoList;
 using FancyToDo.Core.ToDoList.DomainEvents;
 using FancyToDo.Core.ToDoList.Entities.ToDoItem;
-using FancyToDo.Infrastructure.Configuration;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Options;
 

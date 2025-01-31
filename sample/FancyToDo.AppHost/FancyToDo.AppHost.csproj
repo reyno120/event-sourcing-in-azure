@@ -7,6 +7,7 @@
         <Nullable>enable</Nullable>
         <IsAspireHost>true</IsAspireHost>
         <UserSecretsId>82B19C17-BE14-41AC-8FAD-1DCA3A9FE2A0</UserSecretsId>
+        <RootNamespace>FancyToDo.AppHost</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

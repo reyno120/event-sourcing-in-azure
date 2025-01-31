@@ -1,5 +1,5 @@
 using EventSourcing;
-using FancyToDo.Infrastructure.Configuration;
+using FancyToDo.Functions.Configuration;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Builder;

@@ -1,4 +1,4 @@
-﻿namespace FancyToDo.Infrastructure.Configuration;
+﻿namespace FancyToDo.Functions.Configuration;
 
 public class ProjectionOptions
 {

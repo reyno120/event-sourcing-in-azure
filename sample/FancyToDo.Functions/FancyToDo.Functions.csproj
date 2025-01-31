@@ -33,7 +33,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\EventSourcing\EventSourcing.csproj" />
     <ProjectReference Include="..\FancyToDo.Core\FancyToDo.Core.csproj" />
-    <ProjectReference Include="..\FancyToDo.Infrastructure\FancyToDo.Infrastructure.csproj" />
     <ProjectReference Include="..\FancyToDo.Projections\FancyToDo.Projections.csproj" />
   </ItemGroup>
   <ItemGroup>
