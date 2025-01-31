@@ -5,6 +5,7 @@ namespace FancyToDo.API.Extensions;
 
 public static class CosmosContainerExtensions
 {
+    // TODO: Research more...does it make sense to make extension methods?
     public static async Task<IEnumerable<T>> Get<T>(this Container container)
     {
         IOrderedQueryable<T> queryable = container.GetItemLinqQueryable<T>();

@@ -23,13 +23,13 @@ internal sealed class EventStoreFactory<T>(CosmosClient cosmosClient,
         // TODO: Custom Exceptions
         // TODO: Exceptions are not working correctly
         if (!containerProperties.Resource.PartitionKeyPath.Equals("/streamId"))
-            throw new Exception("Invalid parition key");
+            throw new InvalidResourceException("Partition Key is invalid. Container should be configured with a Partition Key Path of \"/streamId\"");
 
         var uniqueKeyExists = containerProperties.Resource.UniqueKeyPolicy.UniqueKeys
             .SelectMany(s => s.Paths)
             .Contains("/version");
         if (!uniqueKeyExists)
-            throw new Exception("Unique Key not present.");
+            throw new InvalidResourceException("Container is invalid. Container requires a Unique Key Path of \"/version\" to be configured");
         
 
         // TODO: Is this how we want to categorize the logging??
@@ -50,4 +50,6 @@ internal interface IEventStoreFactory<T>
 // Test exception on namedoptionsaccessor (eventstoreoptions)
 // test exception for missing container/database
 // test exception for containerproperties (pk and uk)
+// test custom exceptions
+// logging exceptions
 // test logging

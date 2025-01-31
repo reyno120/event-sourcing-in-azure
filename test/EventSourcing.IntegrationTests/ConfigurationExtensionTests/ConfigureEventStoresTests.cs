@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
-namespace EventSourcing.IntegrationTests.Extensions;
+namespace EventSourcing.IntegrationTests.ConfigurationExtensionTests;
 
 public class ConfigureEventStoresTests
 {

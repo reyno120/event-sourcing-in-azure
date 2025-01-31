@@ -1,15 +1,37 @@
 using System.Text.Json;
+using FancyToDo.Core.ToDoList;
 using FancyToDo.Core.ToDoList.DomainEvents;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace EventSourcing.IntegrationTests.ConcurrencyTests
 {
 	// Class Fixtures https://xunit.net/docs/shared-context
 	// Tests WITHIN Class will not run in parallel https://xunit.net/docs/running-tests-in-parallel.html
 	
-	// TODO: Cleanup/move fixture to this file. Add more integration tests
-	public class ConcurrencyTests(ConcurrencyFixture fixture) : IClassFixture<ConcurrencyFixture>, IDisposable
+	public class ConcurrencyTests(ConcurrencyFixture fixture) : IClassFixture<ConcurrencyFixture>, IAsyncLifetime 
 	{
+		private Container _container = null!;
+		private EventStore<ToDoList> _eventStore = null!;
+		
+		public async Task InitializeAsync()
+		{
+			_container = await fixture.TestDatabase.DefineContainer("ConcurrencyTestContainer", "/streamId")
+				.WithUniqueKey()
+				.Path("/version")
+				.Attach()
+				.CreateIfNotExistsAsync();
+			
+
+			_eventStore = new EventStore<ToDoList>(_container, new Mock<ILogger<ToDoList>>().Object);
+		}
+		
+		// Cheap easy way of clearing container between tests
+		public async Task DisposeAsync() =>
+			await _container.DeleteContainerAsync();
+		
+		
 		private readonly Guid _toDoListId = Guid.Parse("381cafbf-9126-43ff-bbd4-eda0eef17e97"); 
 		
 		[Fact]
@@ -25,11 +47,11 @@ namespace EventSourcing.IntegrationTests.ConcurrencyTests
 				payload: JsonSerializer.Serialize(new ToDoListCreatedEvent(_toDoListId, "Fancy ToDo List"))
 			);
 
-			await fixture.EventStoreContainer.CreateItemAsync(stream);
+			await _container.CreateItemAsync(stream);
 			
 
-			// Act
-			var toDoList = await fixture.EventStore.Load(_toDoListId);
+			// Act - Simulating save happening before process is finished
+			var toDoList = await _eventStore.Load(_toDoListId);
 			
 			stream = new EventStream(
 				streamId: _toDoListId,
@@ -38,13 +60,13 @@ namespace EventSourcing.IntegrationTests.ConcurrencyTests
 				payload: JsonSerializer.Serialize(
 					new ItemAddedEvent(_toDoListId, Guid.NewGuid(), "Test Task 1", "To Do"))
 			);
-			await fixture.EventStoreContainer.CreateItemAsync(stream);	
+			await _container.CreateItemAsync(stream);	
 
-			toDoList!.AddToDo("Test Concurrent Task");
-
+			toDoList.AddToDo("Test Concurrent Task");
 			
-			// Assert
-			var exception = await Assert.ThrowsAsync<CosmosException>(async () => await fixture.EventStore.Append(toDoList));
+			
+			// Assert - Validate Concurrency Error Occurs
+			var exception = await Assert.ThrowsAsync<CosmosException>(async () => await _eventStore.Append(toDoList));
 			Assert.Equal(HttpStatusCode.Conflict, exception.StatusCode);
 		}
 		
@@ -62,11 +84,11 @@ namespace EventSourcing.IntegrationTests.ConcurrencyTests
 				payload: JsonSerializer.Serialize(new ToDoListCreatedEvent(_toDoListId, "Fancy ToDo List"))
 			);
 
-			await fixture.EventStoreContainer.CreateItemAsync(stream);
+			await _container.CreateItemAsync(stream);
 			
 
-			// Act
-			var toDoList = await fixture.EventStore.Load(_toDoListId);
+			// Act - Simulating save happening before process is finished
+			var toDoList = await _eventStore.Load(_toDoListId);
 			
 			stream = new EventStream(
 				streamId: _toDoListId,
@@ -75,20 +97,15 @@ namespace EventSourcing.IntegrationTests.ConcurrencyTests
 				payload: JsonSerializer.Serialize(
 					new ItemAddedEvent(_toDoListId, Guid.NewGuid(), "Test Task 1", "To Do"))
 			);
-			await fixture.EventStoreContainer.CreateItemAsync(stream);	
+			await _container.CreateItemAsync(stream);	
 
 			toDoList!.AddToDo("Test Concurrent Task");
 			toDoList.RenameTask(toDoList.Items[0].Id, "Test Rename");
 
 			
-			// Assert
-			var exception = await Assert.ThrowsAsync<CosmosException>(async () => await fixture.EventStore.Append(toDoList));
+			// Assert - Validate Concurrency Error Occurs
+			var exception = await Assert.ThrowsAsync<CosmosException>(async () => await _eventStore.Append(toDoList));
 			Assert.Equal(HttpStatusCode.Conflict, exception.StatusCode);
-		}
-
-		public void Dispose()
-		{
-			Task.Run(async () => await fixture.ClearEventStore()).Wait();
 		}
 	}
 }
