@@ -10,7 +10,8 @@ namespace EventSourcing.IntegrationTests.ConcurrencyTests
 	// Class Fixtures https://xunit.net/docs/shared-context
 	// Tests WITHIN Class will not run in parallel https://xunit.net/docs/running-tests-in-parallel.html
 	
-	public class ConcurrencyTests(ConcurrencyFixture fixture) : IClassFixture<ConcurrencyFixture>, IAsyncLifetime 
+	[Collection("CosmosDb collection")]
+	public class ConcurrencyTests(CosmosDbTestContainerFixture fixture) : IAsyncLifetime 
 	{
 		private Container _container = null!;
 		private EventStore<ToDoList> _eventStore = null!;

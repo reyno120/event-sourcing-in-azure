@@ -1,9 +1,9 @@
 ﻿using Microsoft.Azure.Cosmos;
 using Testcontainers.CosmosDb;
 
-namespace EventSourcing.IntegrationTests.ConcurrencyTests;
+namespace EventSourcing.IntegrationTests;
 
-public class ConcurrencyFixture : IAsyncLifetime
+public class CosmosDbTestContainerFixture : IAsyncLifetime
 {
     private readonly CosmosDbContainer _cosmosDbContainer = new CosmosDbBuilder().Build();
     private CosmosClient _cosmosClient = null!;
@@ -42,3 +42,6 @@ public class ConcurrencyFixture : IAsyncLifetime
         _cosmosClient.Dispose();
     }
 }
+
+[CollectionDefinition("CosmosDb collection")]
+public class CosmosDbTestContainerCollection : ICollectionFixture<CosmosDbTestContainerFixture> {}
