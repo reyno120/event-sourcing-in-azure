@@ -27,7 +27,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcing.IntegrationTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcing.UnitTests", "test\EventSourcing.UnitTests\EventSourcing.UnitTests.csproj", "{B2721E91-3A00-4047-9224-A1B2510FE5AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "test\Testing\Testing.csproj", "{C64C11F4-7006-46D1-A9EA-4FF267E09111}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcing.FunctionalTests", "test\EventSourcing.FunctionalTests\EventSourcing.FunctionalTests.csproj", "{C64C11F4-7006-46D1-A9EA-4FF267E09111}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
