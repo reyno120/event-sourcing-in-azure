@@ -18,6 +18,8 @@ builder.ConfigureEventStores();
 
 var app = builder.Build();
 
+await app.InitializeCosmosDb();
+
 // app.UseLoggingMiddleware();
 
 // Configure the HTTP request pipeline.

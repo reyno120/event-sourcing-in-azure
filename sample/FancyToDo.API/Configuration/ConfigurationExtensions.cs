@@ -7,7 +7,7 @@ public static class ConfigurationExtensions
    public static WebApplicationBuilder ConfigureDataStore(this WebApplicationBuilder builder)
    {
       builder.AddAzureCosmosClient(
-         "local-fancy-cosmos",
+         "fancy-cosmos",
          null,
          clientOptions =>
          {
