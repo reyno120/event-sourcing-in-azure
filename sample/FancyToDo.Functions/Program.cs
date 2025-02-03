@@ -27,7 +27,7 @@ builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
     };
     
     return new CosmosClient(
-        "fancy-cosmos",
+        "CosmosDBConnectionString",
         clientOptions
         );
 });

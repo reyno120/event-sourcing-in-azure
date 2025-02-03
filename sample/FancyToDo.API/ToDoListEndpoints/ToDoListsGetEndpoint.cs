@@ -23,7 +23,7 @@ public class ToDoListsGetEndpoint(
         Summary = "Gets all To Do Lists",
         Description = "Gets all To Do Lists",
         OperationId = "ToDoList_Get",
-        Tags = new[] { "ToDoListEndpoint" })
+        Tags = new[] { "ToDoListEndpoints" })
     ]
     public override async Task<IActionResult> HandleAsync(CancellationToken token)
     {

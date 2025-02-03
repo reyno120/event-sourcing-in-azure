@@ -23,5 +23,23 @@
     "EventStoreE" : {
       "DatabaseName": "DatabaseNameE"
     }
+  },
+  "MissingEventStore": {
+    "NotARealEntity" : {
+      "DatabaseName": "Test",
+      "ContainerName": "Test"
+    }
+  },
+  "InvalidPartitionKey" : {
+    "ToDoList": {
+      "DatabaseName": "InvalidPartitionKeyTestDatabase",
+      "ContainerName": "InvalidPartitionKeyTestContainer"
+    }
+  },
+  "InvalidContainer" : {
+    "ToDoList": {
+      "DatabaseName": "InvalidContainerTestDatabase",
+      "ContainerName": "InvalidContainerTestContainer"
+    }
   }
 }

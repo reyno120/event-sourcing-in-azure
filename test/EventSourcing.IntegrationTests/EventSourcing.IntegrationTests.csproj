@@ -33,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="ConfigurationExtensionTests\TestConfig.json">
+    <Content Include="ConfigurationExtensionTests\testconfig.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="ConcurrencyTests\TestConfig.json">

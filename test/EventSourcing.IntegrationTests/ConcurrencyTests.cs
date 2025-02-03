@@ -5,7 +5,7 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace EventSourcing.IntegrationTests.ConcurrencyTests
+namespace EventSourcing.IntegrationTests
 {
 	// Class Fixtures https://xunit.net/docs/shared-context
 	// Tests WITHIN Class will not run in parallel https://xunit.net/docs/running-tests-in-parallel.html
