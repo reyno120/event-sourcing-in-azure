@@ -46,7 +46,8 @@ public class ToDoItemsCreateEndpointTests(AppHostFixture fixture)
         
         // Assert
         var toDoList = await fixture.ProjectionContainer
-            .ReadManyItemsAsync<ToDoListView>(new List<(string id, PartitionKey partitionKey)> { (toDoListId.ToString(),  new PartitionKey("/id")) });
+            .ReadManyItemsAsync<ToDoListView>(new List<(string id, PartitionKey partitionKey)>
+                { (toDoListId.ToString(), new PartitionKey("/id")) });
         
         // TODO: Also check eventstream saved correctly
         // Handle Azure Function Delay
@@ -54,9 +55,9 @@ public class ToDoItemsCreateEndpointTests(AppHostFixture fixture)
         {
             await Task.Delay(500);
             toDoList = await fixture.ProjectionContainer
-                .ReadManyItemsAsync<ToDoListView>(new List<(string id, PartitionKey partitionKey)> { (toDoListId.ToString(),  new PartitionKey("/id")) });
+                .ReadManyItemsAsync<ToDoListView>(new List<(string id, PartitionKey partitionKey)>
+                    { (toDoListId.ToString(), new PartitionKey("/id")) });
         }
         Assert.Equal("Create_Success", toDoList.First().Items.First().Task); 
-        
     }
 }

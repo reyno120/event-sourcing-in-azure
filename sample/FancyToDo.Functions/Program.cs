@@ -25,7 +25,15 @@ builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
         SerializerOptions = new CosmosSerializationOptions
         {
             PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase
-        }
+        },
+        // WARNING
+        // TODO: Should only be used for local development
+        // https://learn.microsoft.com/en-us/azure/cosmos-db/how-to-develop-emulator?tabs=windows%2Ccsharp&pivots=api-nosql#import-the-emulators-tlsssl-certificate
+        HttpClientFactory = () => new HttpClient(new HttpClientHandler()
+        {
+            ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+        }),
+        ConnectionMode = ConnectionMode.Gateway
     };
     
     return new CosmosClient(

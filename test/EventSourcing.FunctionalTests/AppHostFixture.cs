@@ -43,9 +43,11 @@ public class AppHostFixture : IAsyncLifetime
         
         
         // OBTAIN CONFIGURATION
-        var directory = Path.Combine(Directory.GetCurrentDirectory(), "../../../../");
+
+        var fancyApiSettings = Path.Combine(Directory.GetCurrentDirectory(),
+            "..\\..\\..\\..\\..\\sample\\FancyToDo.API\\appsettings.json");
         var configuration = new ConfigurationBuilder()
-            .AddJsonFile("../../../../../sample/FancyToDo.API/appsettings.json").Build();
+            .AddJsonFile(fancyApiSettings).Build();
         
         var eventStoreOptions = new EventStoreOptions();
         configuration.GetSection($"EventStores:{nameof(ToDoList)}").Bind(eventStoreOptions);
@@ -53,20 +55,21 @@ public class AppHostFixture : IAsyncLifetime
         var projectionOptions = new ProjectionOptions();
         configuration.GetSection("Projection").Bind(projectionOptions);
         
-        
         // SETUP AZURE FUNCTION TEST CONTAINER
         // At this time, Aspire does not support CosmosDBTriggered Azure Functions
         _azureFunctionImage = new ImageFromDockerfileBuilder()
-            .WithDockerfileDirectory($"{Directory.GetCurrentDirectory()}/../../../../FancyToDo.Functions")
-            .WithDockerfile("Dockerfile")
+            .WithDockerfileDirectory(CommonDirectoryPath.GetSolutionDirectory(), string.Empty)
+            .WithDockerfile("sample/FancyToDo.Functions/Dockerfile")
             .Build();
         await _azureFunctionImage.CreateAsync().ConfigureAwait(false);
 
         _azureFunctionContainer = new ContainerBuilder().WithImage(_azureFunctionImage)
             .WithEnvironment("DatabaseName", eventStoreOptions.DatabaseName)
-            .WithEnvironment("ContainerName", eventStoreOptions.ContainerName).WithEnvironment(
-                "ConnectionStrings.CosmosDBConnectionString", await _app.GetConnectionStringAsync("fancy-cosmos"))
-            .WithWaitStrategy(Wait.ForUnixContainer().UntilMessageIsLogged("Worker process started and initialized."))
+            .WithEnvironment("ContainerName", eventStoreOptions.ContainerName)
+            .WithEnvironment("CosmosDBConnectionString", 
+                await _app.GetConnectionStringAsync("fancy-cosmos"))
+            .WithWaitStrategy(Wait.ForUnixContainer().UntilMessageIsLogged("Worker process started and initialized.",
+                o => o.WithTimeout(TimeSpan.FromMinutes(3))))
             .Build();
         // TODO: ConfigureAwait?
         await _azureFunctionContainer.StartAsync().ConfigureAwait(false);

@@ -33,4 +33,11 @@
       <ProjectReference Include="..\..\sample\FancyToDo.Core\FancyToDo.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="testsettings.json" />
+      <Content Include="testsettings.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>
